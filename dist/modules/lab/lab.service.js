@@ -27,7 +27,7 @@ let LabService = class LabService {
         return lab.save();
     }
     async findAll() {
-        return await this.labModel.find();
+        return await this.labModel.find().lean();
     }
 };
 exports.LabService = LabService;

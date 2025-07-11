@@ -18,7 +18,7 @@ export class MediaService {
     private readonly cloudinaryService: CloudinaryService,
   ) {}
 
-  async createMedia(dto: CreateMediaDto): Promise<Media> {
+  async createMedia(dto: CreateMediaDto): Promise<MediaDocument> {
     const media = new this.mediaModel({
       ...dto,
       isTemporary: dto.isTemporary ?? true,
@@ -30,7 +30,7 @@ export class MediaService {
   async uploadAndCreateMedia(
     file: Express.Multer.File,
     userId?: string,
-  ): Promise<Media> {
+  ): Promise<MediaDocument> {
     try {
       const result = await this.cloudinaryService.uploadFile(file);
 

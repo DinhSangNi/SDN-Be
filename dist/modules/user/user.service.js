@@ -25,7 +25,7 @@ let UserService = class UserService {
     }
     async createUser(dto) {
         const { email, password, fullName, role } = dto;
-        const existing = await this.userModel.findOne({ email });
+        const existing = await this.userModel.findOne({ email }).lean();
         if (existing) {
             throw new common_1.BadRequestException('Email already exists');
         }
@@ -56,7 +56,7 @@ let UserService = class UserService {
             .limit(parseInt(limit))
             .select('-password')
             .lean();
-        const totalItems = await this.userModel.countDocuments(filter);
+        const totalItems = await this.userModel.countDocuments(filter).lean();
         return {
             users,
             totalItems,

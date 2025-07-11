@@ -19,7 +19,7 @@ export class PostService {
   ) {}
 
   async getAll(filterDto: GetPostsFilterDto): Promise<{
-    posts: Post[];
+    posts: PostDocument[];
     page: number;
     limit: number;
     totalItems: number;
@@ -47,8 +47,7 @@ export class PostService {
         })
         .skip(skip)
         .limit(limit)
-        .populate('createdBy')
-        .lean(),
+        .populate('createdBy'),
       page,
       limit,
       totalItems,

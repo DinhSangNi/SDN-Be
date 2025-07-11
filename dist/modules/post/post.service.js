@@ -52,10 +52,10 @@ let PostService = class PostService {
         };
     }
     async getById(id) {
-        const post = await this.postModel.findById(id).populate('createdBy');
+        const post = await this.postModel.findById(id).populate('createdBy').lean();
         if (!post)
             throw new common_1.NotFoundException(`Post with id ${id} not found !`);
-        return post.toObject();
+        return post;
     }
     async create(createPostDto, userId) {
         const createdPost = new this.postModel({

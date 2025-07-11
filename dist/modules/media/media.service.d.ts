@@ -9,8 +9,8 @@ export declare class MediaService {
     createMedia(dto: CreateMediaDto): Promise<MediaDocument>;
     uploadAndCreateMedia(file: Express.Multer.File, userId?: string): Promise<MediaDocument>;
     getAllTemporarayMedia(): Promise<Media[]>;
-    deleteByPublicId(publicId: string): Promise<(import("mongoose").Document<unknown, {}, MediaDocument, {}> & Media & import("mongoose").Document<unknown, any, any, Record<string, any>> & Required<{
-        _id: unknown;
+    deleteByPublicId(publicId: string): Promise<(import("mongoose").FlattenMaps<MediaDocument> & Required<{
+        _id: import("mongoose").FlattenMaps<unknown>;
     }> & {
         __v: number;
     }) | null>;

@@ -24,11 +24,13 @@ let BookingService = class BookingService {
     }
     async create(createBookingDto, userId) {
         const { lab, date, slot } = createBookingDto;
-        const exists = await this.bookingModel.exists({
+        const exists = await this.bookingModel
+            .exists({
             lab,
             date,
             slot,
-        });
+        })
+            .lean();
         if (exists) {
             throw new common_1.ConflictException('This slot has been booked');
         }

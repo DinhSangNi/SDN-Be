@@ -31,7 +31,7 @@ let MediaService = class MediaService {
             isTemporary: dto.isTemporary ?? true,
             type: dto.type ?? 'image',
         });
-        return media.save();
+        return (await media.save()).toObject();
     }
     async uploadAndCreateMedia(file, userId) {
         try {
@@ -53,22 +53,24 @@ let MediaService = class MediaService {
         }
     }
     async getAllTemporarayMedia() {
-        return await this.mediaModel.find({
+        return await this.mediaModel
+            .find({
             isTemporary: true,
-        });
+        })
+            .lean();
     }
     async deleteByPublicId(publicId) {
-        return this.mediaModel.findOneAndDelete({ publicId });
+        return await this.mediaModel.findOneAndDelete({ publicId }).lean();
     }
     async deleteById(id) {
-        const media = await this.mediaModel.findById(id);
+        const media = await this.mediaModel.findById(id).lean();
         if (!media)
             throw new common_1.NotFoundException('Media not found');
         await this.mediaModel.deleteOne({ _id: media.id });
         await this.cloudinaryService.deleteFile(media.publicId);
     }
     async deleteByUrl(url) {
-        const media = await this.mediaModel.findOne({ url: url });
+        const media = await this.mediaModel.findOne({ url: url }).lean();
         if (!media)
             throw new common_1.NotFoundException('Media not found');
         await this.mediaModel.deleteOne({ _id: media.id });

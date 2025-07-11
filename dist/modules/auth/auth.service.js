@@ -54,10 +54,10 @@ let AuthService = class AuthService {
         };
     }
     async register(dto) {
-        const newUser = await this.userService.createUser(dto);
+        const newUser = (await this.userService.createUser(dto)).toObject();
         const accessToken = await this.generateAccessToken(newUser._id, newUser.email, newUser.role);
         const refreshToken = await this.generateRefreshToken(newUser._id, newUser.email, newUser.role);
-        const { password, ...rest } = newUser.toObject();
+        const { password, ...rest } = newUser;
         return {
             user: rest,
             accessToken,
