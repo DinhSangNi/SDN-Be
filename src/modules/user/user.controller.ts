@@ -6,6 +6,7 @@ import {
   HttpStatus,
   Param,
   Patch,
+  Post,
   Query,
   Res,
   UseGuards,
@@ -21,6 +22,7 @@ import { UpdateUserActiveDto } from './dto/update-user-active.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { RoleGuard } from 'src/common/guards/role.guard';
 import { Role } from 'src/common/decorators/role.decorator';
+import { CreateUserDto } from './dto/create-user.dto';
 
 @Controller('user')
 export class UserController {
@@ -45,6 +47,20 @@ export class UserController {
             data.limit,
             data.totalItems,
           ),
+        ),
+      );
+  }
+
+  @Post()
+  @UseGuards(AuthGuard('jwt'), RoleGuard)
+  @Role('admin')
+  async CreateUser(@Body() dto: CreateUserDto, @Res() res: Response) {
+    return res
+      .status(HttpStatus.OK)
+      .json(
+        new ApiResponse<User>(
+          'Update role of user successfully',
+          await this.userService.createUser(dto),
         ),
       );
   }

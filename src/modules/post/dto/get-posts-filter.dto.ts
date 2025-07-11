@@ -1,4 +1,11 @@
-import { IsOptional, IsBoolean, IsInt, Min, IsEnum } from 'class-validator';
+import {
+  IsOptional,
+  IsBoolean,
+  IsInt,
+  Min,
+  IsEnum,
+  IsString,
+} from 'class-validator';
 import { Type } from 'class-transformer';
 import { PostType } from './create-post.dto';
 
@@ -38,4 +45,8 @@ export class GetPostsFilterDto {
   @IsOptional()
   @IsEnum(SortType)
   sort?: SortType;
+
+  @IsOptional()
+  @IsString()
+  keyword?: string;
 }

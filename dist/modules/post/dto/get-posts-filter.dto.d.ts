@@ -10,4 +10,5 @@ export declare class GetPostsFilterDto {
     page?: number;
     limit?: number;
     sort?: SortType;
+    keyword?: string;
 }

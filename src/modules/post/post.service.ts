@@ -11,6 +11,7 @@ import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { UpdatePostVisibilityDto } from './dto/update-visible.dto';
 import { UpdatePostPriorityDto } from './dto/update-priority.dto';
+import { SearchPostDto } from './dto/search-post.dto';
 
 @Injectable()
 export class PostService {
@@ -25,29 +26,45 @@ export class PostService {
     totalItems: number;
     totalPages: number;
   }> {
-    const { isVisible, type, priority, sort, page = 1, limit = 10 } = filterDto;
+    const {
+      isVisible,
+      type,
+      priority,
+      sort,
+      page = 1,
+      limit = 10,
+      keyword,
+    } = filterDto;
 
     const query: any = {};
+
     if (isVisible !== undefined) query.isVisible = isVisible;
     if (type !== undefined) query.type = type;
     if (priority !== undefined) query.priority = priority;
 
+    if (keyword) {
+      query.$or = [
+        { title: { $regex: keyword, $options: 'i' } },
+        { content: { $regex: keyword, $options: 'i' } },
+      ];
+    }
+
     const skip = (page - 1) * limit;
-
     const totalItems = await this.postModel.countDocuments(query);
-
     const totalPages = Math.ceil(totalItems / limit);
 
+    const posts = await this.postModel
+      .find(query)
+      .sort({
+        priority: -1,
+        createdAt: sort === SortType.LATEST ? -1 : 1,
+      })
+      .skip(skip)
+      .limit(limit)
+      .populate('createdBy');
+
     return {
-      posts: await this.postModel
-        .find(query)
-        .sort({
-          priority: -1,
-          createdAt: sort !== undefined && sort === SortType.LATEST ? -1 : 1,
-        })
-        .skip(skip)
-        .limit(limit)
-        .populate('createdBy'),
+      posts,
       page,
       limit,
       totalItems,
@@ -65,7 +82,7 @@ export class PostService {
   async create(createPostDto: CreatePostDto, userId: string): Promise<Post> {
     const createdPost = new this.postModel({
       ...createPostDto,
-      priority: createPostDto.type === 'post' ? 1 : 0,
+      priority: createPostDto.type === 'post' ? 1 : 2,
       createdBy: new Types.ObjectId(userId),
     });
     return await createdPost.save();

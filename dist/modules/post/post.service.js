@@ -24,7 +24,7 @@ let PostService = class PostService {
         this.postModel = postModel;
     }
     async getAll(filterDto) {
-        const { isVisible, type, priority, sort, page = 1, limit = 10 } = filterDto;
+        const { isVisible, type, priority, sort, page = 1, limit = 10, keyword, } = filterDto;
         const query = {};
         if (isVisible !== undefined)
             query.isVisible = isVisible;
@@ -32,19 +32,26 @@ let PostService = class PostService {
             query.type = type;
         if (priority !== undefined)
             query.priority = priority;
+        if (keyword) {
+            query.$or = [
+                { title: { $regex: keyword, $options: 'i' } },
+                { content: { $regex: keyword, $options: 'i' } },
+            ];
+        }
         const skip = (page - 1) * limit;
         const totalItems = await this.postModel.countDocuments(query);
         const totalPages = Math.ceil(totalItems / limit);
+        const posts = await this.postModel
+            .find(query)
+            .sort({
+            priority: -1,
+            createdAt: sort === get_posts_filter_dto_1.SortType.LATEST ? -1 : 1,
+        })
+            .skip(skip)
+            .limit(limit)
+            .populate('createdBy');
         return {
-            posts: await this.postModel
-                .find(query)
-                .sort({
-                priority: -1,
-                createdAt: sort !== undefined && sort === get_posts_filter_dto_1.SortType.LATEST ? -1 : 1,
-            })
-                .skip(skip)
-                .limit(limit)
-                .populate('createdBy'),
+            posts,
             page,
             limit,
             totalItems,
@@ -60,7 +67,7 @@ let PostService = class PostService {
     async create(createPostDto, userId) {
         const createdPost = new this.postModel({
             ...createPostDto,
-            priority: createPostDto.type === 'post' ? 1 : 0,
+            priority: createPostDto.type === 'post' ? 1 : 2,
             createdBy: new mongoose_2.Types.ObjectId(userId),
         });
         return await createdPost.save();

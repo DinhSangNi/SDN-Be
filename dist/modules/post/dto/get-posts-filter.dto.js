@@ -25,6 +25,7 @@ class GetPostsFilterDto {
     page;
     limit;
     sort;
+    keyword;
 }
 exports.GetPostsFilterDto = GetPostsFilterDto;
 __decorate([
@@ -64,4 +65,9 @@ __decorate([
     (0, class_validator_1.IsEnum)(SortType),
     __metadata("design:type", String)
 ], GetPostsFilterDto.prototype, "sort", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], GetPostsFilterDto.prototype, "keyword", void 0);
 //# sourceMappingURL=get-posts-filter.dto.js.map

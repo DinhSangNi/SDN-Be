@@ -23,6 +23,7 @@ const update_user_active_dto_1 = require("./dto/update-user-active.dto");
 const passport_1 = require("@nestjs/passport");
 const role_guard_1 = require("../../common/guards/role.guard");
 const role_decorator_1 = require("../../common/decorators/role.decorator");
+const create_user_dto_1 = require("./dto/create-user.dto");
 let UserController = class UserController {
     userService;
     constructor(userService) {
@@ -33,6 +34,11 @@ let UserController = class UserController {
         return res
             .status(common_1.HttpStatus.OK)
             .json(new api_response_dto_1.ApiResponse('List of users', new paginated_response_dto_1.PaginatedResponse(data.users, data.page, data.limit, data.totalItems)));
+    }
+    async CreateUser(dto, res) {
+        return res
+            .status(common_1.HttpStatus.OK)
+            .json(new api_response_dto_1.ApiResponse('Update role of user successfully', await this.userService.createUser(dto)));
     }
     async updateUserRole(id, dto, res) {
         return res
@@ -61,6 +67,16 @@ __decorate([
     __metadata("design:paramtypes", [get_users_filter_dto_1.GetFilterUsersDto, Object]),
     __metadata("design:returntype", Promise)
 ], UserController.prototype, "getAllUsers", null);
+__decorate([
+    (0, common_1.Post)(),
+    (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt'), role_guard_1.RoleGuard),
+    (0, role_decorator_1.Role)('admin'),
+    __param(0, (0, common_1.Body)()),
+    __param(1, (0, common_1.Res)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [create_user_dto_1.CreateUserDto, Object]),
+    __metadata("design:returntype", Promise)
+], UserController.prototype, "CreateUser", null);
 __decorate([
     (0, common_1.Patch)('/:id/role'),
     (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt'), role_guard_1.RoleGuard),

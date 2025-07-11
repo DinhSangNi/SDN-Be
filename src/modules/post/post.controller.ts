@@ -112,7 +112,6 @@ export class PostController {
   @Role('admin')
   async deletePost(
     @Param('id') id: string,
-    @Req()
     @Res()
     res: Response,
   ) {
