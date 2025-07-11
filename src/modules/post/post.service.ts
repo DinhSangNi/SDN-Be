@@ -36,20 +36,18 @@ export class PostService {
 
     const totalItems = await this.postModel.countDocuments(query);
 
-    const posts = await this.postModel
-      .find(query)
-      .sort({
-        priority: -1,
-        createdAt: sort !== undefined && sort === SortType.LATEST ? -1 : 1,
-      })
-      .skip(skip)
-      .limit(limit)
-      .populate('createdBy');
-
     const totalPages = Math.ceil(totalItems / limit);
 
     return {
-      posts,
+      posts: await this.postModel
+        .find(query)
+        .sort({
+          priority: -1,
+          createdAt: sort !== undefined && sort === SortType.LATEST ? -1 : 1,
+        })
+        .skip(skip)
+        .limit(limit)
+        .populate('createdBy'),
       page,
       limit,
       totalItems,

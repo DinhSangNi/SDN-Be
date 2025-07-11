@@ -1,0 +1,2 @@
+export declare const GEMINI_PRO_MODEL = "GEMINI_PRO_MODEL";
+export declare const GEMINI_PRO_VISION_MODEL = "GEMINI_PRO_VISION_MODEL";
