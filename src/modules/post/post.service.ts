@@ -19,7 +19,7 @@ export class PostService {
   ) {}
 
   async getAll(filterDto: GetPostsFilterDto): Promise<{
-    posts: PostDocument[];
+    posts: Post[];
     page: number;
     limit: number;
     totalItems: number;
@@ -47,7 +47,8 @@ export class PostService {
         })
         .skip(skip)
         .limit(limit)
-        .populate('createdBy'),
+        .populate('createdBy')
+        .lean(),
       page,
       limit,
       totalItems,
@@ -56,10 +57,10 @@ export class PostService {
   }
 
   async getById(id: string): Promise<Post> {
-    const post = await this.postModel.findById(id).populate('createdBy');
+    const post = await this.postModel.findById(id).populate('createdBy').lean();
     if (!post) throw new NotFoundException(`Post with id ${id} not found !`);
 
-    return post.toObject();
+    return post;
   }
 
   async create(createPostDto: CreatePostDto, userId: string): Promise<Post> {

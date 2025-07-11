@@ -14,6 +14,6 @@ export class LabService {
   }
 
   async findAll(): Promise<Lab[]> {
-    return await this.labModel.find();
+    return await this.labModel.find().lean();
   }
 }

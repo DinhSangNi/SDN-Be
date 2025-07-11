@@ -21,11 +21,13 @@ export class BookingService {
   ): Promise<BookingDocument> {
     const { lab, date, slot } = createBookingDto;
 
-    const exists = await this.bookingModel.exists({
-      lab,
-      date,
-      slot,
-    });
+    const exists = await this.bookingModel
+      .exists({
+        lab,
+        date,
+        slot,
+      })
+      .lean();
 
     if (exists) {
       throw new ConflictException('This slot has been booked');

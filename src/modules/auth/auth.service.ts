@@ -70,7 +70,7 @@ export class AuthService {
   }
 
   async register(dto: CreateUserDto) {
-    const newUser = await this.userService.createUser(dto);
+    const newUser = (await this.userService.createUser(dto)).toObject();
 
     const accessToken = await this.generateAccessToken(
       newUser._id as string,
@@ -84,7 +84,7 @@ export class AuthService {
       newUser.role,
     );
 
-    const { password, ...rest } = newUser.toObject();
+    const { password, ...rest } = newUser;
     return {
       user: rest,
       accessToken,

@@ -18,19 +18,19 @@ export class MediaService {
     private readonly cloudinaryService: CloudinaryService,
   ) {}
 
-  async createMedia(dto: CreateMediaDto): Promise<MediaDocument> {
+  async createMedia(dto: CreateMediaDto): Promise<Media> {
     const media = new this.mediaModel({
       ...dto,
       isTemporary: dto.isTemporary ?? true,
       type: dto.type ?? 'image',
     });
-    return media.save();
+    return (await media.save()).toObject();
   }
 
   async uploadAndCreateMedia(
     file: Express.Multer.File,
     userId?: string,
-  ): Promise<MediaDocument> {
+  ): Promise<Media> {
     try {
       const result = await this.cloudinaryService.uploadFile(file);
 
@@ -52,24 +52,26 @@ export class MediaService {
   }
 
   async getAllTemporarayMedia(): Promise<Media[]> {
-    return await this.mediaModel.find({
-      isTemporary: true,
-    });
+    return await this.mediaModel
+      .find({
+        isTemporary: true,
+      })
+      .lean();
   }
 
   async deleteByPublicId(publicId: string) {
-    return this.mediaModel.findOneAndDelete({ publicId });
+    return await this.mediaModel.findOneAndDelete({ publicId }).lean();
   }
 
   async deleteById(id: string): Promise<void> {
-    const media = await this.mediaModel.findById(id);
+    const media = await this.mediaModel.findById(id).lean();
     if (!media) throw new NotFoundException('Media not found');
     await this.mediaModel.deleteOne({ _id: media.id });
     await this.cloudinaryService.deleteFile(media.publicId);
   }
 
   async deleteByUrl(url: string): Promise<void> {
-    const media = await this.mediaModel.findOne({ url: url });
+    const media = await this.mediaModel.findOne({ url: url }).lean();
     if (!media) throw new NotFoundException('Media not found');
     await this.mediaModel.deleteOne({ _id: media.id });
     await this.cloudinaryService.deleteFile(media.publicId);
