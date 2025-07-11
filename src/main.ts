@@ -11,7 +11,7 @@ async function bootstrap() {
 
   app.use(cookieParser());
   app.enableCors({
-    origin: configService.get<string>('FE_URL') ?? 'http://localhost:3000',
+    origin: [configService.get<string>('FE_URL'), 'http://localhost:3000'],
     credentials: true,
   });
 
