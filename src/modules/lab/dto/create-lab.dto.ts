@@ -1,4 +1,11 @@
-import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { Type } from 'class-transformer';
+import {
+  IsBoolean,
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsString,
+} from 'class-validator';
 
 export class CreateLabDto {
   @IsString()
@@ -12,4 +19,14 @@ export class CreateLabDto {
   @IsString()
   @IsOptional()
   location?: string;
+
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber()
+  totalSeats: number;
+
+  @IsOptional()
+  @Type(() => Boolean)
+  @IsBoolean()
+  autoGenerateSeats: string;
 }

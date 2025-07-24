@@ -2,6 +2,7 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
 import { User } from 'src/modules/user/schema/user.schema';
 import { Lab } from 'src/modules/lab/schema/lab.schema';
+import { BookingStatus } from '../types/booking.enum';
 
 export type BookingDocument = Booking & Document;
 
@@ -13,6 +14,9 @@ export class Booking {
   @Prop({ type: Types.ObjectId, ref: Lab.name, required: true })
   lab: Types.ObjectId;
 
+  @Prop({ type: Types.ObjectId, ref: 'Seat', required: true })
+  seat: Types.ObjectId;
+
   @Prop({ type: Date, required: true })
   date: Date;
 
@@ -21,13 +25,10 @@ export class Booking {
 
   @Prop({
     required: true,
-    enum: ['pending', 'approved', 'rejected', 'cancelled'],
-    default: 'pending',
+    enum: BookingStatus,
+    default: BookingStatus.APPROVED,
   })
-  status: 'pending' | 'approved' | 'rejected' | 'cancelled';
-
-  @Prop()
-  reason?: string;
+  status: BookingStatus;
 }
 
 export const BookingSchema = SchemaFactory.createForClass(Booking);

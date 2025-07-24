@@ -3,9 +3,13 @@ import { CreateBookingDto } from './dto/create-booking.dto';
 import { Response } from 'express';
 import { CreateMultipleBookingsDto } from './dto/create-multiple-bookings.dto';
 import { GetBookingsByLabAndDateRangeDto } from './dto/get-bookings.dto';
+import { UserRole } from '../user/schema/user.schema';
+import { CancelManyBookingDto } from './dto/cancel-many-booking.dto';
+import { GetBookingQueryDto } from './dto/get-bookings-query.dto';
 export declare class BookingController {
     private readonly bookingService;
     constructor(bookingService: BookingService);
+    getAllBookings(query: GetBookingQueryDto, res: Response): Promise<Response<any, Record<string, any>>>;
     createBooking(createBookingDto: CreateBookingDto, req: {
         user: {
             userId: string;
@@ -17,4 +21,11 @@ export declare class BookingController {
         };
     }, res: Response): Promise<Response<any, Record<string, any>>>;
     getBookingsByLabAndDateRange(query: GetBookingsByLabAndDateRangeDto, res: Response): Promise<Response<any, Record<string, any>>>;
+    cancelBooking(req: {
+        user: {
+            userId: string;
+            role: UserRole;
+        };
+    }, labId: string, res: Response): Promise<Response<any, Record<string, any>>>;
+    cancelBookings(body: CancelManyBookingDto, res: Response): Promise<Response<any, Record<string, any>>>;
 }

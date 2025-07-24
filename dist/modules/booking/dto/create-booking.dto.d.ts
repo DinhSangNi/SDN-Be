@@ -1,6 +1,8 @@
+import { BookingStatus } from '../types/booking.enum';
 export declare class CreateBookingDto {
-    lab: string;
+    labId: string;
+    seatId: string;
     date: string;
     slot: number;
-    reason?: string;
+    status?: BookingStatus;
 }

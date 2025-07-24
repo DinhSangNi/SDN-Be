@@ -20,42 +20,81 @@ const api_response_dto_1 = require("../../common/dto/api-response.dto");
 const passport_1 = require("@nestjs/passport");
 const role_guard_1 = require("../../common/guards/role.guard");
 const role_decorator_1 = require("../../common/decorators/role.decorator");
+const booking_service_1 = require("../booking/booking.service");
+const get_labs_query_1 = require("./dto/get-labs-query");
 let LabController = class LabController {
     labService;
-    constructor(labService) {
+    bookingService;
+    constructor(labService, bookingService) {
         this.labService = labService;
+        this.bookingService = bookingService;
     }
-    async createLab(createLabDto, res) {
+    async getLabs(query, res) {
+        const result = await this.labService.getLabs(query);
+        return res
+            .status(common_1.HttpStatus.OK)
+            .json(new api_response_dto_1.ApiResponse('Get labs successfully', result));
+    }
+    async createLab(req, createLabDto, res) {
+        const { userId } = req.user;
         return res
             .status(common_1.HttpStatus.CREATED)
-            .json(new api_response_dto_1.ApiResponse('Create new lab successfully', (await this.labService.create(createLabDto)).toObject()));
+            .json(new api_response_dto_1.ApiResponse('Create new lab successfully', (await this.labService.create(createLabDto, userId)).toObject()));
     }
-    async getAllLabs(res) {
+    async getLabById(labId, res) {
         return res
             .status(common_1.HttpStatus.CREATED)
-            .json(new api_response_dto_1.ApiResponse('Create new lab successfully', await this.labService.findAll()));
+            .json(new api_response_dto_1.ApiResponse(`Get lab by ${labId} successfully`, (await this.labService.findById(labId))?.toObject()));
+    }
+    async getSeatsWithBooking(labId, date, slot, res) {
+        const slotNum = parseInt(slot, 10);
+        return res
+            .status(common_1.HttpStatus.CREATED)
+            .json(new api_response_dto_1.ApiResponse(`Get lab by ${labId} successfully`, await this.bookingService.findSeatsWithBooking(labId, date, slotNum)));
     }
 };
 exports.LabController = LabController;
 __decorate([
+    (0, common_1.Get)(),
+    (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt'), role_guard_1.RoleGuard),
+    __param(0, (0, common_1.Query)()),
+    __param(1, (0, common_1.Res)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [get_labs_query_1.GetLabsQuery, Object]),
+    __metadata("design:returntype", Promise)
+], LabController.prototype, "getLabs", null);
+__decorate([
     (0, common_1.Post)(),
     (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt'), role_guard_1.RoleGuard),
     (0, role_decorator_1.Role)('admin'),
-    __param(0, (0, common_1.Body)()),
-    __param(1, (0, common_1.Res)()),
+    __param(0, (0, common_1.Req)()),
+    __param(1, (0, common_1.Body)()),
+    __param(2, (0, common_1.Res)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [create_lab_dto_1.CreateLabDto, Object]),
+    __metadata("design:paramtypes", [Object, create_lab_dto_1.CreateLabDto, Object]),
     __metadata("design:returntype", Promise)
 ], LabController.prototype, "createLab", null);
 __decorate([
-    (0, common_1.Get)(),
-    __param(0, (0, common_1.Res)()),
+    (0, common_1.Get)(':id'),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Res)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
+    __metadata("design:paramtypes", [String, Object]),
     __metadata("design:returntype", Promise)
-], LabController.prototype, "getAllLabs", null);
+], LabController.prototype, "getLabById", null);
+__decorate([
+    (0, common_1.Get)(':labId/seats'),
+    __param(0, (0, common_1.Param)('labId')),
+    __param(1, (0, common_1.Query)('date')),
+    __param(2, (0, common_1.Query)('slot')),
+    __param(3, (0, common_1.Res)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, String, String, Object]),
+    __metadata("design:returntype", Promise)
+], LabController.prototype, "getSeatsWithBooking", null);
 exports.LabController = LabController = __decorate([
-    (0, common_1.Controller)('lab'),
-    __metadata("design:paramtypes", [lab_service_1.LabService])
+    (0, common_1.Controller)('labs'),
+    __metadata("design:paramtypes", [lab_service_1.LabService,
+        booking_service_1.BookingService])
 ], LabController);
 //# sourceMappingURL=lab.controller.js.map

@@ -11,10 +11,16 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.LabSchema = exports.Lab = void 0;
 const mongoose_1 = require("@nestjs/mongoose");
+const mongoose_2 = require("mongoose");
+const lab_enum_1 = require("../types/lab.enum");
 let Lab = class Lab {
     name;
     description;
     location;
+    status;
+    totalSeats;
+    createdBy;
+    updatedBy;
 };
 exports.Lab = Lab;
 __decorate([
@@ -29,8 +35,31 @@ __decorate([
     (0, mongoose_1.Prop)(),
     __metadata("design:type", String)
 ], Lab.prototype, "location", void 0);
+__decorate([
+    (0, mongoose_1.Prop)({ enum: lab_enum_1.LabStatus, default: lab_enum_1.LabStatus.ACTIVE }),
+    __metadata("design:type", String)
+], Lab.prototype, "status", void 0);
+__decorate([
+    (0, mongoose_1.Prop)(),
+    __metadata("design:type", Number)
+], Lab.prototype, "totalSeats", void 0);
+__decorate([
+    (0, mongoose_1.Prop)({ type: mongoose_2.Types.ObjectId, ref: 'User', default: null }),
+    __metadata("design:type", String)
+], Lab.prototype, "createdBy", void 0);
+__decorate([
+    (0, mongoose_1.Prop)({ type: mongoose_2.Types.ObjectId, ref: 'User', default: null }),
+    __metadata("design:type", String)
+], Lab.prototype, "updatedBy", void 0);
 exports.Lab = Lab = __decorate([
     (0, mongoose_1.Schema)({ timestamps: true })
 ], Lab);
 exports.LabSchema = mongoose_1.SchemaFactory.createForClass(Lab);
+exports.LabSchema.virtual('seats', {
+    ref: 'Seat',
+    localField: '_id',
+    foreignField: 'lab',
+});
+exports.LabSchema.set('toJSON', { virtuals: true });
+exports.LabSchema.set('toObject', { virtuals: true });
 //# sourceMappingURL=lab.schema.js.map

@@ -14,13 +14,14 @@ const mongoose_1 = require("@nestjs/mongoose");
 const mongoose_2 = require("mongoose");
 const user_schema_1 = require("../../user/schema/user.schema");
 const lab_schema_1 = require("../../lab/schema/lab.schema");
+const booking_enum_1 = require("../types/booking.enum");
 let Booking = class Booking {
     user;
     lab;
+    seat;
     date;
     slot;
     status;
-    reason;
 };
 exports.Booking = Booking;
 __decorate([
@@ -32,6 +33,10 @@ __decorate([
     __metadata("design:type", mongoose_2.Types.ObjectId)
 ], Booking.prototype, "lab", void 0);
 __decorate([
+    (0, mongoose_1.Prop)({ type: mongoose_2.Types.ObjectId, ref: 'Seat', required: true }),
+    __metadata("design:type", mongoose_2.Types.ObjectId)
+], Booking.prototype, "seat", void 0);
+__decorate([
     (0, mongoose_1.Prop)({ type: Date, required: true }),
     __metadata("design:type", Date)
 ], Booking.prototype, "date", void 0);
@@ -42,15 +47,11 @@ __decorate([
 __decorate([
     (0, mongoose_1.Prop)({
         required: true,
-        enum: ['pending', 'approved', 'rejected', 'cancelled'],
-        default: 'pending',
+        enum: booking_enum_1.BookingStatus,
+        default: booking_enum_1.BookingStatus.APPROVED,
     }),
     __metadata("design:type", String)
 ], Booking.prototype, "status", void 0);
-__decorate([
-    (0, mongoose_1.Prop)(),
-    __metadata("design:type", String)
-], Booking.prototype, "reason", void 0);
 exports.Booking = Booking = __decorate([
     (0, mongoose_1.Schema)({ timestamps: true })
 ], Booking);

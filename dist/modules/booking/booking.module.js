@@ -12,6 +12,8 @@ const booking_service_1 = require("./booking.service");
 const booking_controller_1 = require("./booking.controller");
 const mongoose_1 = require("@nestjs/mongoose");
 const booking_schema_1 = require("./schema/booking.schema");
+const lab_module_1 = require("../lab/lab.module");
+const seat_module_1 = require("../seat/seat.module");
 let BookingModule = class BookingModule {
 };
 exports.BookingModule = BookingModule;
@@ -24,9 +26,12 @@ exports.BookingModule = BookingModule = __decorate([
                     schema: booking_schema_1.BookingSchema,
                 },
             ]),
+            (0, common_1.forwardRef)(() => lab_module_1.LabModule),
+            seat_module_1.SeatModule,
         ],
         controllers: [booking_controller_1.BookingController],
         providers: [booking_service_1.BookingService],
+        exports: [booking_service_1.BookingService],
     })
 ], BookingModule);
 //# sourceMappingURL=booking.module.js.map

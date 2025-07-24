@@ -3,12 +3,16 @@ import {
   IsDateString,
   IsIn,
   IsOptional,
-  IsString,
+  IsEnum,
 } from 'class-validator';
+import { BookingStatus } from '../types/booking.enum';
 
 export class CreateBookingDto {
   @IsMongoId()
-  lab: string;
+  labId: string;
+
+  @IsMongoId()
+  seatId: string;
 
   @IsDateString()
   date: string;
@@ -17,6 +21,6 @@ export class CreateBookingDto {
   slot: number;
 
   @IsOptional()
-  @IsString()
-  reason?: string;
+  @IsEnum(BookingStatus)
+  status?: BookingStatus;
 }

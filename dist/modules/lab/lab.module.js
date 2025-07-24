@@ -12,6 +12,8 @@ const lab_service_1 = require("./lab.service");
 const lab_controller_1 = require("./lab.controller");
 const mongoose_1 = require("@nestjs/mongoose");
 const lab_schema_1 = require("./schema/lab.schema");
+const seat_module_1 = require("../seat/seat.module");
+const booking_module_1 = require("../booking/booking.module");
 let LabModule = class LabModule {
 };
 exports.LabModule = LabModule;
@@ -24,6 +26,8 @@ exports.LabModule = LabModule = __decorate([
                     schema: lab_schema_1.LabSchema,
                 },
             ]),
+            (0, common_1.forwardRef)(() => seat_module_1.SeatModule),
+            (0, common_1.forwardRef)(() => booking_module_1.BookingModule),
         ],
         controllers: [lab_controller_1.LabController],
         providers: [lab_service_1.LabService],

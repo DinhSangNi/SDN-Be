@@ -11,17 +11,23 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CreateBookingDto = void 0;
 const class_validator_1 = require("class-validator");
+const booking_enum_1 = require("../types/booking.enum");
 class CreateBookingDto {
-    lab;
+    labId;
+    seatId;
     date;
     slot;
-    reason;
+    status;
 }
 exports.CreateBookingDto = CreateBookingDto;
 __decorate([
     (0, class_validator_1.IsMongoId)(),
     __metadata("design:type", String)
-], CreateBookingDto.prototype, "lab", void 0);
+], CreateBookingDto.prototype, "labId", void 0);
+__decorate([
+    (0, class_validator_1.IsMongoId)(),
+    __metadata("design:type", String)
+], CreateBookingDto.prototype, "seatId", void 0);
 __decorate([
     (0, class_validator_1.IsDateString)(),
     __metadata("design:type", String)
@@ -32,7 +38,7 @@ __decorate([
 ], CreateBookingDto.prototype, "slot", void 0);
 __decorate([
     (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsEnum)(booking_enum_1.BookingStatus),
     __metadata("design:type", String)
-], CreateBookingDto.prototype, "reason", void 0);
+], CreateBookingDto.prototype, "status", void 0);
 //# sourceMappingURL=create-booking.dto.js.map

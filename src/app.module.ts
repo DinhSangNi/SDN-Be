@@ -12,6 +12,7 @@ import { ScheduleModule } from '@nestjs/schedule';
 import { LabModule } from './modules/lab/lab.module';
 import { BookingModule } from './modules/booking/booking.module';
 import { GeminiModule } from './modules/gemini/gemini.module';
+import { SeatModule } from './modules/seat/seat.module';
 
 @Module({
   imports: [
@@ -34,6 +35,7 @@ import { GeminiModule } from './modules/gemini/gemini.module';
     LabModule,
     BookingModule,
     GeminiModule,
+    SeatModule,
   ],
   controllers: [AppController],
   providers: [AppService],
