@@ -1,8 +1,5 @@
-import { PostType } from './create-post.dto';
-export declare enum SortType {
-    LATEST = "latest",
-    OLDEST = "oldest"
-}
+import { PostType } from '../types/post.enum';
+import { SortType } from 'src/common/types/enums';
 export declare class GetPostsFilterDto {
     isVisible?: boolean;
     type?: PostType;

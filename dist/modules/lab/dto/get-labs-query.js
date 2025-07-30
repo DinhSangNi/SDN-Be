@@ -13,6 +13,7 @@ exports.GetLabsQuery = void 0;
 const class_validator_1 = require("class-validator");
 const lab_enum_1 = require("../types/lab.enum");
 const class_transformer_1 = require("class-transformer");
+const swagger_1 = require("@nestjs/swagger");
 class GetLabsQuery {
     keyword;
     status;
@@ -21,22 +22,38 @@ class GetLabsQuery {
 }
 exports.GetLabsQuery = GetLabsQuery;
 __decorate([
+    (0, swagger_1.ApiPropertyOptional)({
+        description: 'Search by keyword (e.g., lab name or location)',
+    }),
     (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
 ], GetLabsQuery.prototype, "keyword", void 0);
 __decorate([
+    (0, swagger_1.ApiPropertyOptional)({
+        description: 'Filter by lab status',
+        enum: lab_enum_1.LabStatus,
+        enumName: 'LabStatus',
+    }),
     (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsEnum)(lab_enum_1.LabStatus),
     __metadata("design:type", String)
 ], GetLabsQuery.prototype, "status", void 0);
 __decorate([
+    (0, swagger_1.ApiPropertyOptional)({
+        description: 'Page number for pagination',
+        example: 1,
+    }),
     (0, class_validator_1.IsOptional)(),
     (0, class_transformer_1.Type)(() => Number),
     (0, class_validator_1.IsNumber)(),
     __metadata("design:type", Number)
 ], GetLabsQuery.prototype, "page", void 0);
 __decorate([
+    (0, swagger_1.ApiPropertyOptional)({
+        description: 'Limit per page for pagination',
+        example: 10,
+    }),
     (0, class_validator_1.IsOptional)(),
     (0, class_transformer_1.Type)(() => Number),
     (0, class_validator_1.IsNumber)(),

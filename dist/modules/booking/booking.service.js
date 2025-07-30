@@ -21,7 +21,7 @@ const booking_enum_1 = require("./types/booking.enum");
 const mongoose_3 = require("mongoose");
 const lab_service_1 = require("../lab/lab.service");
 const seat_service_1 = require("../seat/seat.service");
-const user_schema_1 = require("../user/schema/user.schema");
+const enums_1 = require("../../common/types/enums");
 let BookingService = class BookingService {
     connection;
     bookingModel;
@@ -158,7 +158,7 @@ let BookingService = class BookingService {
         if (!booking) {
             throw new common_1.NotFoundException('Booking not found or already cancelled');
         }
-        if (booking.user.toString() !== userId && role !== user_schema_1.UserRole.ADMIN) {
+        if (booking.user.toString() !== userId && role !== enums_1.UserRole.ADMIN) {
             throw new common_1.ForbiddenException("You don't have permission to cancel this booking");
         }
         booking.status = booking_enum_1.BookingStatus.CANCELLED;

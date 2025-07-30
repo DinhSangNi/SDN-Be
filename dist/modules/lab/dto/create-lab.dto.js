@@ -12,6 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.CreateLabDto = void 0;
 const class_transformer_1 = require("class-transformer");
 const class_validator_1 = require("class-validator");
+const swagger_1 = require("@nestjs/swagger");
 class CreateLabDto {
     name;
     description;
@@ -21,30 +22,41 @@ class CreateLabDto {
 }
 exports.CreateLabDto = CreateLabDto;
 __decorate([
+    (0, swagger_1.ApiProperty)({ description: 'Lab name' }),
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.IsNotEmpty)(),
     __metadata("design:type", String)
 ], CreateLabDto.prototype, "name", void 0);
 __decorate([
+    (0, swagger_1.ApiPropertyOptional)({ description: 'Lab description' }),
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.IsOptional)(),
     __metadata("design:type", String)
 ], CreateLabDto.prototype, "description", void 0);
 __decorate([
+    (0, swagger_1.ApiPropertyOptional)({ description: 'Lab location' }),
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.IsOptional)(),
     __metadata("design:type", String)
 ], CreateLabDto.prototype, "location", void 0);
 __decorate([
+    (0, swagger_1.ApiPropertyOptional)({
+        description: 'Total number of seats in lab',
+        type: Number,
+    }),
     (0, class_validator_1.IsOptional)(),
     (0, class_transformer_1.Type)(() => Number),
     (0, class_validator_1.IsNumber)(),
     __metadata("design:type", Number)
 ], CreateLabDto.prototype, "totalSeats", void 0);
 __decorate([
+    (0, swagger_1.ApiPropertyOptional)({
+        description: 'Should the system auto-generate seats?',
+        type: Boolean,
+    }),
     (0, class_validator_1.IsOptional)(),
     (0, class_transformer_1.Type)(() => Boolean),
     (0, class_validator_1.IsBoolean)(),
-    __metadata("design:type", String)
+    __metadata("design:type", Boolean)
 ], CreateLabDto.prototype, "autoGenerateSeats", void 0);
 //# sourceMappingURL=create-lab.dto.js.map

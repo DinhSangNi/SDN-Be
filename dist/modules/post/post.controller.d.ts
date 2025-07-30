@@ -14,12 +14,12 @@ export declare class PostController {
         };
     }, res: Response): Promise<Response<any, Record<string, any>>>;
     getAllPosts(filterDto: GetPostsFilterDto, res: Response): Promise<Response<any, Record<string, any>>>;
+    getPostById(id: string, res: Response): Promise<Response<any, Record<string, any>>>;
     update(id: string, updatePostDto: UpdatePostDto, req: {
         user: {
             userId: string;
         };
     }, res: Response): Promise<Response<any, Record<string, any>>>;
-    getPostById(id: string, res: Response): Promise<Response<any, Record<string, any>>>;
     deletePost(id: string, res: Response): Promise<Response<any, Record<string, any>>>;
     changeVisibility(id: string, dto: UpdatePostVisibilityDto, res: Response): Promise<Response<any, Record<string, any>>>;
     updatePriority(id: string, dto: UpdatePostPriorityDto, res: Response): Promise<Response<any, Record<string, any>>>;

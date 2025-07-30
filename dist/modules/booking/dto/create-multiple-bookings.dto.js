@@ -13,11 +13,16 @@ exports.CreateMultipleBookingsDto = void 0;
 const class_validator_1 = require("class-validator");
 const class_transformer_1 = require("class-transformer");
 const create_booking_dto_1 = require("./create-booking.dto");
+const swagger_1 = require("@nestjs/swagger");
 class CreateMultipleBookingsDto {
     bookings;
 }
 exports.CreateMultipleBookingsDto = CreateMultipleBookingsDto;
 __decorate([
+    (0, swagger_1.ApiProperty)({
+        type: [create_booking_dto_1.CreateBookingDto],
+        description: 'Danh sách các booking cần tạo',
+    }),
     (0, class_validator_1.IsArray)(),
     (0, class_validator_1.ValidateNested)({ each: true }),
     (0, class_transformer_1.Type)(() => create_booking_dto_1.CreateBookingDto),

@@ -11,11 +11,16 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.GenerateTextDto = void 0;
 const class_validator_1 = require("class-validator");
+const swagger_1 = require("@nestjs/swagger");
 class GenerateTextDto {
     prompt;
 }
 exports.GenerateTextDto = GenerateTextDto;
 __decorate([
+    (0, swagger_1.ApiProperty)({
+        example: 'Write a short story about a dragon.',
+        description: 'The input prompt used to generate AI text',
+    }),
     (0, class_validator_1.IsNotEmpty)(),
     (0, class_validator_1.IsString)(),
     __metadata("design:type", String)

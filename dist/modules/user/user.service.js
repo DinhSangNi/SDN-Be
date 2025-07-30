@@ -18,6 +18,7 @@ const mongoose_1 = require("@nestjs/mongoose");
 const user_schema_1 = require("./schema/user.schema");
 const mongoose_2 = require("mongoose");
 const bcrypt = require("bcrypt");
+const enums_1 = require("../../common/types/enums");
 let UserService = class UserService {
     userModel;
     constructor(userModel) {
@@ -34,7 +35,7 @@ let UserService = class UserService {
             email,
             password: hashedPassword,
             fullName,
-            role: role || user_schema_1.UserRole.STUDENT,
+            role: role || enums_1.UserRole.STUDENT,
         });
         const savedUser = await user.save();
         return savedUser;
@@ -43,26 +44,26 @@ let UserService = class UserService {
         return await this.userModel.findOne({ email });
     }
     async findAll(query) {
-        const { role, isActive, page = '1', limit = '10' } = query;
+        const { role, isActive, page = 1, limit = 10 } = query;
         const filter = {};
         if (role)
             filter.role = role;
         if (isActive !== undefined)
             filter.isActive = isActive === 'true';
-        const skip = (parseInt(page) - 1) * parseInt(limit);
+        const skip = (page - 1) * limit;
         const users = await this.userModel
             .find(filter)
             .skip(skip)
-            .limit(parseInt(limit))
+            .limit(limit)
             .select('-password')
             .lean();
         const totalItems = await this.userModel.countDocuments(filter).lean();
         return {
             users,
             totalItems,
-            page: parseInt(page),
-            limit: parseInt(limit),
-            totalPages: Math.ceil(totalItems / parseInt(limit)),
+            page: page,
+            limit: limit,
+            totalPages: Math.ceil(totalItems / limit),
         };
     }
     async updateRole(userId, dto) {

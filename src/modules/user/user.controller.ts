@@ -23,14 +23,47 @@ import { AuthGuard } from '@nestjs/passport';
 import { RoleGuard } from 'src/common/guards/role.guard';
 import { Role } from 'src/common/decorators/role.decorator';
 import { CreateUserDto } from './dto/create-user.dto';
+import {
+  ApiBearerAuth,
+  ApiBody,
+  ApiOkResponse,
+  ApiOperation,
+  ApiParam,
+  ApiTags,
+} from '@nestjs/swagger';
 
-@Controller('user')
+@ApiTags('users')
+@ApiBearerAuth()
+@Controller('users')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Get()
   @UseGuards(AuthGuard('jwt'), RoleGuard)
   @Role('admin')
+  @ApiOperation({ summary: 'Get all users (admin only)' })
+  @ApiOkResponse({
+    description: 'List of users retrieved successfully',
+    schema: {
+      example: {
+        message: 'List of users',
+        data: {
+          items: [
+            {
+              _id: 'userId123',
+              email: 'john@example.com',
+              role: 'user',
+              isActive: true,
+              createdAt: '2024-01-01T00:00:00.000Z',
+            },
+          ],
+          page: 1,
+          limit: 10,
+          totalItems: 100,
+        },
+      },
+    },
+  })
   async getAllUsers(
     @Query() filterDto: GetFilterUsersDto,
     @Res() res: Response,
@@ -54,6 +87,11 @@ export class UserController {
   @Post()
   @UseGuards(AuthGuard('jwt'), RoleGuard)
   @Role('admin')
+  @ApiOperation({ summary: 'Create a new user (admin only)' })
+  @ApiBody({
+    type: CreateUserDto,
+    description: 'Data required to create a new user',
+  })
   async CreateUser(@Body() dto: CreateUserDto, @Res() res: Response) {
     return res
       .status(HttpStatus.OK)
@@ -68,6 +106,16 @@ export class UserController {
   @Patch('/:id/role')
   @UseGuards(AuthGuard('jwt'), RoleGuard)
   @Role('admin')
+  @ApiOperation({ summary: 'Update user role (admin only)' })
+  @ApiParam({
+    name: 'id',
+    description: 'ID of the user to update',
+    example: '64c3c0f0f4e8f5a9b2e9c4d1',
+  })
+  @ApiBody({
+    type: UpdateUserRoleDto,
+    description: 'New role to assign to the user',
+  })
   async updateUserRole(
     @Param('id') id: string,
     @Body() dto: UpdateUserRoleDto,
@@ -86,6 +134,16 @@ export class UserController {
   @Patch('/:id/active')
   @UseGuards(AuthGuard('jwt'), RoleGuard)
   @Role('admin')
+  @ApiOperation({ summary: 'Update active status of user (admin only)' })
+  @ApiParam({
+    name: 'id',
+    description: 'ID of the user whose active status is being updated',
+    example: '64c3c0f0f4e8f5a9b2e9c4d1',
+  })
+  @ApiBody({
+    type: UpdateUserActiveDto,
+    description: 'New active status to apply to the user',
+  })
   async updateActiveStatus(
     @Param('id') id: string,
     @Body() dto: UpdateUserActiveDto,
@@ -104,6 +162,12 @@ export class UserController {
   @Delete('/:id')
   @UseGuards(AuthGuard('jwt'), RoleGuard)
   @Role('admin')
+  @ApiOperation({ summary: 'Delete a user by ID (admin only)' })
+  @ApiParam({
+    name: 'id',
+    description: 'ID of the user to be deleted',
+    example: '64c3c0f0f4e8f5a9b2e9c4d1',
+  })
   async deleteUser(@Param('id') id: string, @Res() res: Response) {
     return res
       .status(HttpStatus.OK)

@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
-import { PostType } from '../dto/create-post.dto';
+import { PostType } from '../types/post.enum';
 
 export type PostDocument = Post & Document;
 
@@ -10,7 +10,7 @@ export class Post {
   title: string;
 
   @Prop({ required: true })
-  content: string; // HTML hoặc Markdown
+  content: string;
 
   @Prop({})
   coverImage: string;

@@ -1,5 +1,5 @@
-import { SeatService } from './seat.service';
 import { Response } from 'express';
+import { SeatService } from './seat.service';
 export declare class SeatController {
     private readonly seatService;
     constructor(seatService: SeatService);

@@ -11,6 +11,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UpdateLabDto = void 0;
 const class_validator_1 = require("class-validator");
+const swagger_1 = require("@nestjs/swagger");
 class UpdateLabDto {
     name;
     description;
@@ -19,21 +20,38 @@ class UpdateLabDto {
 }
 exports.UpdateLabDto = UpdateLabDto;
 __decorate([
+    (0, swagger_1.ApiPropertyOptional)({
+        description: 'Tên của phòng lab',
+        example: 'Phòng Lab A1',
+    }),
     (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
 ], UpdateLabDto.prototype, "name", void 0);
 __decorate([
+    (0, swagger_1.ApiPropertyOptional)({
+        description: 'Mô tả chi tiết về phòng lab',
+        example: 'Phòng có máy tính cấu hình cao',
+    }),
     (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
 ], UpdateLabDto.prototype, "description", void 0);
 __decorate([
+    (0, swagger_1.ApiPropertyOptional)({
+        description: 'Vị trí của phòng lab',
+        example: 'Tầng 2, khu A',
+    }),
     (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
 ], UpdateLabDto.prototype, "location", void 0);
 __decorate([
+    (0, swagger_1.ApiPropertyOptional)({
+        description: 'Tổng số ghế trong phòng',
+        example: 30,
+        minimum: 0,
+    }),
     (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsNumber)(),
     (0, class_validator_1.Min)(0),

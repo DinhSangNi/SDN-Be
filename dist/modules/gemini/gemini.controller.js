@@ -15,10 +15,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.GeminiController = void 0;
 const common_1 = require("@nestjs/common");
 const gemini_service_1 = require("./gemini.service");
-const platform_express_1 = require("@nestjs/platform-express");
 const generate_text_dto_1 = require("./dto/generate-text.dto");
 const file_validator_pipe_1 = require("./file-validator.pipe");
 const api_response_dto_1 = require("../../common/dto/api-response.dto");
+const swagger_1 = require("@nestjs/swagger");
 let GeminiController = class GeminiController {
     geminiService;
     constructor(geminiService) {
@@ -33,7 +33,26 @@ let GeminiController = class GeminiController {
 exports.GeminiController = GeminiController;
 __decorate([
     (0, common_1.Post)('text-and-image'),
-    (0, common_1.UseInterceptors)((0, platform_express_1.FileInterceptor)('file')),
+    (0, swagger_1.ApiOperation)({
+        summary: 'Generate AI text from image and prompt',
+        description: 'This endpoint takes a text prompt and an image file to generate AI-based text (e.g., a poem) using multimodal input.',
+    }),
+    (0, swagger_1.ApiConsumes)('multipart/form-data'),
+    (0, swagger_1.ApiBody)({
+        description: 'Prompt and image file',
+        type: generate_text_dto_1.GenerateTextDto,
+        schema: {
+            type: 'object',
+            properties: {
+                prompt: { type: 'string', example: 'Describe this scene poetically.' },
+                file: {
+                    type: 'string',
+                    format: 'binary',
+                },
+            },
+            required: ['prompt', 'file'],
+        },
+    }),
     __param(0, (0, common_1.Body)()),
     __param(1, (0, common_1.UploadedFile)(file_validator_pipe_1.fileValidatorPipe)),
     __param(2, (0, common_1.Res)()),
@@ -42,6 +61,7 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], GeminiController.prototype, "generateTextFromMultiModal", null);
 exports.GeminiController = GeminiController = __decorate([
+    (0, swagger_1.ApiTags)('Gemini'),
     (0, common_1.Controller)('gemini'),
     __metadata("design:paramtypes", [gemini_service_1.GeminiService])
 ], GeminiController);

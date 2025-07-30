@@ -1,7 +1,4 @@
-export declare enum PostType {
-    POST = "post",
-    ANNOUNCEMENT = "announcement"
-}
+import { PostType } from '../types/post.enum';
 export declare class CreatePostDto {
     title: string;
     content: string;
@@ -9,5 +6,4 @@ export declare class CreatePostDto {
     isVisible?: boolean;
     type: PostType;
     priority?: number;
-    tags?: string[];
 }

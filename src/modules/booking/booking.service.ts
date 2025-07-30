@@ -15,10 +15,10 @@ import { BookingStatus } from './types/booking.enum';
 import { Connection } from 'mongoose';
 import { LabService } from '../lab/lab.service';
 import { SeatService } from '../seat/seat.service';
-import { UserRole } from '../user/schema/user.schema';
 import { CancelManyBookingDto } from './dto/cancel-many-booking.dto';
 import { GetBookingQueryDto } from './dto/get-bookings-query.dto';
 import { PaginatedResponse } from 'src/common/dto/paginated-response.dto';
+import { UserRole } from 'src/common/types/enums';
 
 @Injectable()
 export class BookingService {

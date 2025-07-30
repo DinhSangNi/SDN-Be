@@ -24,6 +24,7 @@ const role_guard_1 = require("../../common/guards/role.guard");
 const role_decorator_1 = require("../../common/decorators/role.decorator");
 const cancel_many_booking_dto_1 = require("./dto/cancel-many-booking.dto");
 const get_bookings_query_dto_1 = require("./dto/get-bookings-query.dto");
+const swagger_1 = require("@nestjs/swagger");
 let BookingController = class BookingController {
     bookingService;
     constructor(bookingService) {
@@ -68,6 +69,8 @@ __decorate([
     (0, common_1.Get)(),
     (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt'), role_guard_1.RoleGuard),
     (0, role_decorator_1.Role)('admin'),
+    (0, swagger_1.ApiOperation)({ summary: 'Get all bookings (admin only)' }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: 'Successfully retrieved bookings.' }),
     __param(0, (0, common_1.Query)()),
     __param(1, (0, common_1.Res)()),
     __metadata("design:type", Function),
@@ -77,6 +80,8 @@ __decorate([
 __decorate([
     (0, common_1.Post)(),
     (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt')),
+    (0, swagger_1.ApiOperation)({ summary: 'Create a booking (student only)' }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: 'Booking created successfully.' }),
     __param(0, (0, common_1.Body)()),
     __param(1, (0, common_1.Req)()),
     __param(2, (0, common_1.Res)()),
@@ -88,6 +93,11 @@ __decorate([
     (0, common_1.Post)('/multiple'),
     (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt'), role_guard_1.RoleGuard),
     (0, role_decorator_1.Role)('admin'),
+    (0, swagger_1.ApiOperation)({ summary: 'Create multiple bookings (admin only)' }),
+    (0, swagger_1.ApiResponse)({
+        status: 200,
+        description: 'Multiple bookings created successfully.',
+    }),
     __param(0, (0, common_1.Body)()),
     __param(1, (0, common_1.Req)()),
     __param(2, (0, common_1.Res)()),
@@ -98,6 +108,11 @@ __decorate([
 __decorate([
     (0, common_1.Get)('lab-range'),
     (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt')),
+    (0, swagger_1.ApiOperation)({ summary: 'Get bookings by lab and date range' }),
+    (0, swagger_1.ApiResponse)({
+        status: 200,
+        description: 'Successfully retrieved bookings by lab and range.',
+    }),
     __param(0, (0, common_1.Query)()),
     __param(1, (0, common_1.Res)()),
     __metadata("design:type", Function),
@@ -107,6 +122,11 @@ __decorate([
 __decorate([
     (0, common_1.Patch)(':id/cancel-booking'),
     (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt')),
+    (0, swagger_1.ApiOperation)({ summary: 'Cancel a booking (student or admin)' }),
+    (0, swagger_1.ApiResponse)({
+        status: 200,
+        description: 'Booking cancelled successfully.',
+    }),
     __param(0, (0, common_1.Req)()),
     __param(1, (0, common_1.Param)('id')),
     __param(2, (0, common_1.Res)()),
@@ -118,7 +138,11 @@ __decorate([
     (0, common_1.Patch)('cancel-bookings'),
     (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt'), role_guard_1.RoleGuard),
     (0, role_decorator_1.Role)('admin'),
-    __param(0, (0, common_1.Req)()),
+    (0, swagger_1.ApiOperation)({ summary: 'Cancel multiple bookings (admin only)' }),
+    (0, swagger_1.ApiResponse)({
+        status: 200,
+        description: 'Multiple bookings cancelled successfully.',
+    }),
     __param(0, (0, common_1.Body)()),
     __param(1, (0, common_1.Res)()),
     __metadata("design:type", Function),
@@ -126,6 +150,8 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], BookingController.prototype, "cancelBookings", null);
 exports.BookingController = BookingController = __decorate([
+    (0, swagger_1.ApiTags)('Bookings'),
+    (0, swagger_1.ApiBearerAuth)(),
     (0, common_1.Controller)('bookings'),
     __metadata("design:paramtypes", [booking_service_1.BookingService])
 ], BookingController);

@@ -11,13 +11,19 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UpdateUserRoleDto = void 0;
 const class_validator_1 = require("class-validator");
-const user_schema_1 = require("../schema/user.schema");
+const swagger_1 = require("@nestjs/swagger");
+const enums_1 = require("../../../common/types/enums");
 class UpdateUserRoleDto {
     role;
 }
 exports.UpdateUserRoleDto = UpdateUserRoleDto;
 __decorate([
-    (0, class_validator_1.IsEnum)(user_schema_1.UserRole, { message: 'Role must be either "admin" or "student"' }),
+    (0, swagger_1.ApiProperty)({
+        enum: enums_1.UserRole,
+        example: enums_1.UserRole.ADMIN,
+        description: 'New role of the user (must be either "admin" or "student")',
+    }),
+    (0, class_validator_1.IsEnum)(enums_1.UserRole, { message: 'Role must be either "admin" or "student"' }),
     __metadata("design:type", String)
 ], UpdateUserRoleDto.prototype, "role", void 0);
 //# sourceMappingURL=update-user-role.dto.js.map

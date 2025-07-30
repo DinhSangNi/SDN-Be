@@ -14,6 +14,7 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.SeatController = void 0;
 const common_1 = require("@nestjs/common");
+const swagger_1 = require("@nestjs/swagger");
 const seat_service_1 = require("./seat.service");
 const api_response_dto_1 = require("../../common/dto/api-response.dto");
 let SeatController = class SeatController {
@@ -30,6 +31,12 @@ let SeatController = class SeatController {
 exports.SeatController = SeatController;
 __decorate([
     (0, common_1.Get)(':labId'),
+    (0, swagger_1.ApiOperation)({ summary: 'Get seats by lab ID' }),
+    (0, swagger_1.ApiParam)({
+        name: 'labId',
+        description: 'MongoDB ObjectId of the lab',
+        example: '64c3c0f0f4e8f5a9b2e9c4d1',
+    }),
     __param(0, (0, common_1.Param)('labId')),
     __param(1, (0, common_1.Res)()),
     __metadata("design:type", Function),
@@ -37,6 +44,7 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], SeatController.prototype, "getSeatsByLabId", null);
 exports.SeatController = SeatController = __decorate([
+    (0, swagger_1.ApiTags)('seats'),
     (0, common_1.Controller)('seats'),
     __metadata("design:paramtypes", [seat_service_1.SeatService])
 ], SeatController);

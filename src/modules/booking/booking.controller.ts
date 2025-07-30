@@ -16,15 +16,23 @@ import { AuthGuard } from '@nestjs/passport';
 import { CreateBookingDto } from './dto/create-booking.dto';
 import { Booking } from './schema/booking.schema';
 import { Response } from 'express';
-import { ApiResponse } from 'src/common/dto/api-response.dto';
+import { ApiResponse as CustomApiResponse } from 'src/common/dto/api-response.dto';
 import { CreateMultipleBookingsDto } from './dto/create-multiple-bookings.dto';
 import { GetBookingsByLabAndDateRangeDto } from './dto/get-bookings.dto';
 import { RoleGuard } from 'src/common/guards/role.guard';
 import { Role } from 'src/common/decorators/role.decorator';
-import { UserRole } from '../user/schema/user.schema';
 import { CancelManyBookingDto } from './dto/cancel-many-booking.dto';
 import { GetBookingQueryDto } from './dto/get-bookings-query.dto';
+import { UserRole } from 'src/common/types/enums';
+import {
+  ApiBearerAuth,
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+} from '@nestjs/swagger';
 
+@ApiTags('Bookings')
+@ApiBearerAuth()
 @Controller('bookings')
 export class BookingController {
   constructor(private readonly bookingService: BookingService) {}
@@ -32,6 +40,8 @@ export class BookingController {
   @Get()
   @UseGuards(AuthGuard('jwt'), RoleGuard)
   @Role('admin')
+  @ApiOperation({ summary: 'Get all bookings (admin only)' })
+  @ApiResponse({ status: 200, description: 'Successfully retrieved bookings.' })
   async getAllBookings(
     @Query() query: GetBookingQueryDto,
     @Res() res: Response,
@@ -39,25 +49,22 @@ export class BookingController {
     const result = await this.bookingService.getAllBookings(query);
     return res
       .status(HttpStatus.OK)
-      .json(new ApiResponse('Get bookings successfully', result));
+      .json(new CustomApiResponse('Get bookings successfully', result));
   }
 
   @Post()
   @UseGuards(AuthGuard('jwt'))
+  @ApiOperation({ summary: 'Create a booking (student only)' })
+  @ApiResponse({ status: 200, description: 'Booking created successfully.' })
   async createBooking(
     @Body() createBookingDto: CreateBookingDto,
-    @Req()
-    req: {
-      user: {
-        userId: string;
-      };
-    },
+    @Req() req: { user: { userId: string } },
     @Res() res: Response,
   ) {
     return res
       .status(HttpStatus.OK)
       .json(
-        new ApiResponse<Booking>(
+        new CustomApiResponse<Booking>(
           'Create booking successfully',
           (
             await this.bookingService.create(createBookingDto, req.user.userId)
@@ -69,20 +76,20 @@ export class BookingController {
   @Post('/multiple')
   @UseGuards(AuthGuard('jwt'), RoleGuard)
   @Role('admin')
+  @ApiOperation({ summary: 'Create multiple bookings (admin only)' })
+  @ApiResponse({
+    status: 200,
+    description: 'Multiple bookings created successfully.',
+  })
   async createMultipleBookings(
     @Body() dto: CreateMultipleBookingsDto,
-    @Req()
-    req: {
-      user: {
-        userId: string;
-      };
-    },
+    @Req() req: { user: { userId: string } },
     @Res() res: Response,
   ) {
     return res
       .status(HttpStatus.OK)
       .json(
-        new ApiResponse<Booking[]>(
+        new CustomApiResponse<Booking[]>(
           'Create bookings successfully',
           await this.bookingService.createMany(dto, req.user.userId),
         ),
@@ -91,6 +98,11 @@ export class BookingController {
 
   @Get('lab-range')
   @UseGuards(AuthGuard('jwt'))
+  @ApiOperation({ summary: 'Get bookings by lab and date range' })
+  @ApiResponse({
+    status: 200,
+    description: 'Successfully retrieved bookings by lab and range.',
+  })
   async getBookingsByLabAndDateRange(
     @Query() query: GetBookingsByLabAndDateRangeDto,
     @Res() res: Response,
@@ -99,7 +111,7 @@ export class BookingController {
     return res
       .status(HttpStatus.OK)
       .json(
-        new ApiResponse(
+        new CustomApiResponse(
           `Get bookings with id: ${labId} from ${from} to ${to} successfully`,
           await this.bookingService.getBookingsByLabAndDateRange(
             labId,
@@ -112,14 +124,13 @@ export class BookingController {
 
   @Patch(':id/cancel-booking')
   @UseGuards(AuthGuard('jwt'))
+  @ApiOperation({ summary: 'Cancel a booking (student or admin)' })
+  @ApiResponse({
+    status: 200,
+    description: 'Booking cancelled successfully.',
+  })
   async cancelBooking(
-    @Req()
-    req: {
-      user: {
-        userId: string;
-        role: UserRole;
-      };
-    },
+    @Req() req: { user: { userId: string; role: UserRole } },
     @Param('id') labId: string,
     @Res() res: Response,
   ) {
@@ -127,7 +138,7 @@ export class BookingController {
     return res
       .status(HttpStatus.OK)
       .json(
-        new ApiResponse(
+        new CustomApiResponse(
           'Cancel booking succesfully',
           await this.bookingService.cancelBooking(labId, userId, role),
         ),
@@ -137,16 +148,19 @@ export class BookingController {
   @Patch('cancel-bookings')
   @UseGuards(AuthGuard('jwt'), RoleGuard)
   @Role('admin')
+  @ApiOperation({ summary: 'Cancel multiple bookings (admin only)' })
+  @ApiResponse({
+    status: 200,
+    description: 'Multiple bookings cancelled successfully.',
+  })
   async cancelBookings(
-    @Req()
-    @Body()
-    body: CancelManyBookingDto,
+    @Body() body: CancelManyBookingDto,
     @Res() res: Response,
   ) {
     return res
       .status(HttpStatus.OK)
       .json(
-        new ApiResponse(
+        new CustomApiResponse(
           'Cancel many bookings succesfully',
           await this.bookingService.cancelManyBookings(body),
         ),

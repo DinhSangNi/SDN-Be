@@ -6,12 +6,12 @@ import {
 import { InjectModel } from '@nestjs/mongoose';
 import { Post, PostDocument } from './schema/post.schema';
 import { Model, Types } from 'mongoose';
-import { GetPostsFilterDto, SortType } from './dto/get-posts-filter.dto';
+import { GetPostsFilterDto } from './dto/get-posts-filter.dto';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { UpdatePostVisibilityDto } from './dto/update-visible.dto';
 import { UpdatePostPriorityDto } from './dto/update-priority.dto';
-import { SearchPostDto } from './dto/search-post.dto';
+import { SortType } from 'src/common/types/enums';
 
 @Injectable()
 export class PostService {

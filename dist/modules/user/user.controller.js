@@ -24,6 +24,7 @@ const passport_1 = require("@nestjs/passport");
 const role_guard_1 = require("../../common/guards/role.guard");
 const role_decorator_1 = require("../../common/decorators/role.decorator");
 const create_user_dto_1 = require("./dto/create-user.dto");
+const swagger_1 = require("@nestjs/swagger");
 let UserController = class UserController {
     userService;
     constructor(userService) {
@@ -61,6 +62,29 @@ __decorate([
     (0, common_1.Get)(),
     (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt'), role_guard_1.RoleGuard),
     (0, role_decorator_1.Role)('admin'),
+    (0, swagger_1.ApiOperation)({ summary: 'Get all users (admin only)' }),
+    (0, swagger_1.ApiOkResponse)({
+        description: 'List of users retrieved successfully',
+        schema: {
+            example: {
+                message: 'List of users',
+                data: {
+                    items: [
+                        {
+                            _id: 'userId123',
+                            email: 'john@example.com',
+                            role: 'user',
+                            isActive: true,
+                            createdAt: '2024-01-01T00:00:00.000Z',
+                        },
+                    ],
+                    page: 1,
+                    limit: 10,
+                    totalItems: 100,
+                },
+            },
+        },
+    }),
     __param(0, (0, common_1.Query)()),
     __param(1, (0, common_1.Res)()),
     __metadata("design:type", Function),
@@ -71,6 +95,11 @@ __decorate([
     (0, common_1.Post)(),
     (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt'), role_guard_1.RoleGuard),
     (0, role_decorator_1.Role)('admin'),
+    (0, swagger_1.ApiOperation)({ summary: 'Create a new user (admin only)' }),
+    (0, swagger_1.ApiBody)({
+        type: create_user_dto_1.CreateUserDto,
+        description: 'Data required to create a new user',
+    }),
     __param(0, (0, common_1.Body)()),
     __param(1, (0, common_1.Res)()),
     __metadata("design:type", Function),
@@ -81,6 +110,16 @@ __decorate([
     (0, common_1.Patch)('/:id/role'),
     (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt'), role_guard_1.RoleGuard),
     (0, role_decorator_1.Role)('admin'),
+    (0, swagger_1.ApiOperation)({ summary: 'Update user role (admin only)' }),
+    (0, swagger_1.ApiParam)({
+        name: 'id',
+        description: 'ID of the user to update',
+        example: '64c3c0f0f4e8f5a9b2e9c4d1',
+    }),
+    (0, swagger_1.ApiBody)({
+        type: update_user_role_dto_1.UpdateUserRoleDto,
+        description: 'New role to assign to the user',
+    }),
     __param(0, (0, common_1.Param)('id')),
     __param(1, (0, common_1.Body)()),
     __param(2, (0, common_1.Res)()),
@@ -92,6 +131,16 @@ __decorate([
     (0, common_1.Patch)('/:id/active'),
     (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt'), role_guard_1.RoleGuard),
     (0, role_decorator_1.Role)('admin'),
+    (0, swagger_1.ApiOperation)({ summary: 'Update active status of user (admin only)' }),
+    (0, swagger_1.ApiParam)({
+        name: 'id',
+        description: 'ID of the user whose active status is being updated',
+        example: '64c3c0f0f4e8f5a9b2e9c4d1',
+    }),
+    (0, swagger_1.ApiBody)({
+        type: update_user_active_dto_1.UpdateUserActiveDto,
+        description: 'New active status to apply to the user',
+    }),
     __param(0, (0, common_1.Param)('id')),
     __param(1, (0, common_1.Body)()),
     __param(2, (0, common_1.Res)()),
@@ -103,6 +152,12 @@ __decorate([
     (0, common_1.Delete)('/:id'),
     (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt'), role_guard_1.RoleGuard),
     (0, role_decorator_1.Role)('admin'),
+    (0, swagger_1.ApiOperation)({ summary: 'Delete a user by ID (admin only)' }),
+    (0, swagger_1.ApiParam)({
+        name: 'id',
+        description: 'ID of the user to be deleted',
+        example: '64c3c0f0f4e8f5a9b2e9c4d1',
+    }),
     __param(0, (0, common_1.Param)('id')),
     __param(1, (0, common_1.Res)()),
     __metadata("design:type", Function),
@@ -110,7 +165,9 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], UserController.prototype, "deleteUser", null);
 exports.UserController = UserController = __decorate([
-    (0, common_1.Controller)('user'),
+    (0, swagger_1.ApiTags)('users'),
+    (0, swagger_1.ApiBearerAuth)(),
+    (0, common_1.Controller)('users'),
     __metadata("design:paramtypes", [user_service_1.UserService])
 ], UserController);
 //# sourceMappingURL=user.controller.js.map

@@ -11,11 +11,17 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UpdatePostPriorityDto = void 0;
 const class_validator_1 = require("class-validator");
+const swagger_1 = require("@nestjs/swagger");
 class UpdatePostPriorityDto {
     priority;
 }
 exports.UpdatePostPriorityDto = UpdatePostPriorityDto;
 __decorate([
+    (0, swagger_1.ApiProperty)({
+        example: 5,
+        description: 'The new priority for the post (must be a non-negative integer)',
+        minimum: 0,
+    }),
     (0, class_validator_1.IsInt)({ message: 'Priority must be an integer' }),
     (0, class_validator_1.Min)(0, { message: 'Priority must be at least 0' }),
     __metadata("design:type", Number)

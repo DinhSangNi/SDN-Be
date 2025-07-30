@@ -1,12 +1,8 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
+import { UserRole } from 'src/common/types/enums';
 
 export type UserDocument = User & Document;
-
-export enum UserRole {
-  STUDENT = 'student',
-  ADMIN = 'admin',
-}
 
 @Schema({ timestamps: true })
 export class User {

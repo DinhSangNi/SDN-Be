@@ -11,11 +11,17 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CancelManyBookingDto = void 0;
 const class_validator_1 = require("class-validator");
+const swagger_1 = require("@nestjs/swagger");
 class CancelManyBookingDto {
     bookingIds;
 }
 exports.CancelManyBookingDto = CancelManyBookingDto;
 __decorate([
+    (0, swagger_1.ApiProperty)({
+        description: 'Danh sách các bookingId cần huỷ',
+        example: ['64d3a749bcf86cd799439012', '64d3a749bcf86cd799439013'],
+        type: [String],
+    }),
     (0, class_validator_1.IsArray)(),
     (0, class_validator_1.ArrayNotEmpty)(),
     (0, class_validator_1.IsMongoId)({ each: true }),

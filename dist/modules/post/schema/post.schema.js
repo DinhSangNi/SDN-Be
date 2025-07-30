@@ -12,7 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.PostSchema = exports.Post = void 0;
 const mongoose_1 = require("@nestjs/mongoose");
 const mongoose_2 = require("mongoose");
-const create_post_dto_1 = require("../dto/create-post.dto");
+const post_enum_1 = require("../types/post.enum");
 let Post = class Post {
     title;
     content;
@@ -41,7 +41,7 @@ __decorate([
     __metadata("design:type", Boolean)
 ], Post.prototype, "isVisible", void 0);
 __decorate([
-    (0, mongoose_1.Prop)({ type: String, enum: create_post_dto_1.PostType, default: create_post_dto_1.PostType.POST }),
+    (0, mongoose_1.Prop)({ type: String, enum: post_enum_1.PostType, default: post_enum_1.PostType.POST }),
     __metadata("design:type", String)
 ], Post.prototype, "type", void 0);
 __decorate([

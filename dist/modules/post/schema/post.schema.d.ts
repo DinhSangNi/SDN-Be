@@ -1,5 +1,5 @@
 import { Document, Types } from 'mongoose';
-import { PostType } from '../dto/create-post.dto';
+import { PostType } from '../types/post.enum';
 export type PostDocument = Post & Document;
 export declare class Post {
     title: string;

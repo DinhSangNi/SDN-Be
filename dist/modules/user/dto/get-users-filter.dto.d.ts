@@ -1,6 +1,7 @@
+import { UserRole } from 'src/common/types/enums';
 export declare class GetFilterUsersDto {
-    role?: string;
+    role?: UserRole;
     isActive?: string;
-    page?: string;
-    limit?: string;
+    page?: number;
+    limit?: number;
 }

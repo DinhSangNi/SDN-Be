@@ -3,9 +3,9 @@ import { CreateBookingDto } from './dto/create-booking.dto';
 import { Response } from 'express';
 import { CreateMultipleBookingsDto } from './dto/create-multiple-bookings.dto';
 import { GetBookingsByLabAndDateRangeDto } from './dto/get-bookings.dto';
-import { UserRole } from '../user/schema/user.schema';
 import { CancelManyBookingDto } from './dto/cancel-many-booking.dto';
 import { GetBookingQueryDto } from './dto/get-bookings-query.dto';
+import { UserRole } from 'src/common/types/enums';
 export declare class BookingController {
     private readonly bookingService;
     constructor(bookingService: BookingService);

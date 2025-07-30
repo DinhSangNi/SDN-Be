@@ -1,9 +1,6 @@
 import { Document } from 'mongoose';
+import { UserRole } from 'src/common/types/enums';
 export type UserDocument = User & Document;
-export declare enum UserRole {
-    STUDENT = "student",
-    ADMIN = "admin"
-}
 export declare class User {
     email: string;
     password: string;

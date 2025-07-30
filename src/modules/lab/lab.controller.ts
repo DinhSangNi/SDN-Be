@@ -21,7 +21,18 @@ import { Role } from 'src/common/decorators/role.decorator';
 import { BookingService } from '../booking/booking.service';
 import { GetLabsQuery } from './dto/get-labs-query';
 
+import {
+  ApiBearerAuth,
+  ApiTags,
+  ApiOperation,
+  ApiResponse as SwaggerResponse,
+  ApiQuery,
+  ApiParam,
+} from '@nestjs/swagger';
+
+@ApiTags('Labs')
 @Controller('labs')
+@ApiBearerAuth()
 export class LabController {
   constructor(
     private readonly labService: LabService,
@@ -30,6 +41,7 @@ export class LabController {
 
   @Get()
   @UseGuards(AuthGuard('jwt'), RoleGuard)
+  @ApiOperation({ summary: 'Get labs with optional filtering & pagination' })
   async getLabs(@Query() query: GetLabsQuery, @Res() res: Response) {
     const result = await this.labService.getLabs(query);
     return res
@@ -40,6 +52,7 @@ export class LabController {
   @Post()
   @UseGuards(AuthGuard('jwt'), RoleGuard)
   @Role('admin')
+  @ApiOperation({ summary: 'Create a new lab (admin only)' })
   async createLab(
     @Req() req: { user: { userId: string } },
     @Body() createLabDto: CreateLabDto,
@@ -57,9 +70,11 @@ export class LabController {
   }
 
   @Get(':id')
+  @ApiOperation({ summary: 'Get a specific lab by ID' })
+  @ApiParam({ name: 'id', description: 'Lab ID' })
   async getLabById(@Param('id') labId: string, @Res() res: Response) {
     return res
-      .status(HttpStatus.CREATED)
+      .status(HttpStatus.OK)
       .json(
         new ApiResponse(
           `Get lab by ${labId} successfully`,
@@ -69,6 +84,12 @@ export class LabController {
   }
 
   @Get(':labId/seats')
+  @ApiOperation({
+    summary: 'Get seats and bookings for a lab by date and slot',
+  })
+  @ApiParam({ name: 'labId', description: 'Lab ID' })
+  @ApiQuery({ name: 'date', description: 'Date in yyyy-mm-dd format' })
+  @ApiQuery({ name: 'slot', description: 'Slot number', type: Number })
   async getSeatsWithBooking(
     @Param('labId') labId: string,
     @Query('date') date: string,
@@ -78,7 +99,7 @@ export class LabController {
     const slotNum = parseInt(slot, 10);
 
     return res
-      .status(HttpStatus.CREATED)
+      .status(HttpStatus.OK)
       .json(
         new ApiResponse(
           `Get lab by ${labId} successfully`,

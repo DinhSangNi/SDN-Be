@@ -11,11 +11,16 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.DeleteMediaByUrlDto = void 0;
 const class_validator_1 = require("class-validator");
+const swagger_1 = require("@nestjs/swagger");
 class DeleteMediaByUrlDto {
     url;
 }
 exports.DeleteMediaByUrlDto = DeleteMediaByUrlDto;
 __decorate([
+    (0, swagger_1.ApiProperty)({
+        description: 'URL của media cần xóa',
+        example: 'https://res.cloudinary.com/demo/image/upload/v1625811134/sample.jpg',
+    }),
     (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
 ], DeleteMediaByUrlDto.prototype, "url", void 0);

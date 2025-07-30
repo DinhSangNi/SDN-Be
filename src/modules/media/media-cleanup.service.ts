@@ -13,9 +13,6 @@ export class MediaCleanupService {
     private readonly cloudinaryService: CloudinaryService,
   ) {}
 
-  /**
-   * Chạy mỗi giờ → Xoá media tạm đã quá 1 giờ
-   */
   @Cron(CronExpression.EVERY_12_HOURS)
   async handleCleanup() {
     this.logger.log('🔁 Cron: Đang dọn dẹp ảnh isTemporary=true');

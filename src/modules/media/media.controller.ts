@@ -1,4 +1,3 @@
-// src/media/media.controller.ts
 import {
   Controller,
   Post,
@@ -17,17 +16,30 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { MediaService } from './media.service';
 import { Request, Response } from 'express';
 import { AuthGuard } from '@nestjs/passport';
-import { ApiResponse } from 'src/common/dto/api-response.dto';
+import { ApiResponse as ApiResponseDto } from 'src/common/dto/api-response.dto';
 import { DeleteMediaByIdDto } from './dto/delete-media-by-id.dto';
 import { DeleteMediaByUrlDto } from './dto/delete-media-by-url.dto';
 
+import {
+  ApiBearerAuth,
+  ApiConsumes,
+  ApiTags,
+  ApiOperation,
+  ApiParam,
+  ApiQuery,
+} from '@nestjs/swagger';
+
+@ApiTags('Media')
 @Controller('media')
 export class MediaController {
   constructor(private readonly mediaService: MediaService) {}
 
   @Post('upload')
+  @ApiBearerAuth()
   @UseGuards(AuthGuard('jwt'))
   @UseInterceptors(FileInterceptor('file'))
+  @ApiOperation({ summary: 'Upload a media file' })
+  @ApiConsumes('multipart/form-data')
   async uploadMedia(
     @UploadedFile() file: Express.Multer.File,
     @Req() req: Request,
@@ -42,7 +54,7 @@ export class MediaController {
     const media = await this.mediaService.uploadAndCreateMedia(file, userId);
 
     return res.status(HttpStatus.OK).json(
-      new ApiResponse('Upload media successfully', {
+      new ApiResponseDto('Upload media successfully', {
         id: media._id,
         url: media.url,
         publicId: media.publicId,
@@ -54,7 +66,10 @@ export class MediaController {
   }
 
   @Delete('/:id')
+  @ApiBearerAuth()
   @UseGuards(AuthGuard('jwt'))
+  @ApiOperation({ summary: 'Delete media by ID' })
+  @ApiParam({ name: 'id', description: 'ID of the media to delete' })
   async deleteMediaById(
     @Param() dto: DeleteMediaByIdDto,
     @Res() res: Response,
@@ -62,7 +77,7 @@ export class MediaController {
     return res
       .status(HttpStatus.OK)
       .json(
-        new ApiResponse(
+        new ApiResponseDto(
           'Delete media successfully',
           await this.mediaService.deleteById(dto.id),
         ),
@@ -70,7 +85,14 @@ export class MediaController {
   }
 
   @Delete('')
+  @ApiBearerAuth()
   @UseGuards(AuthGuard('jwt'))
+  @ApiOperation({ summary: 'Delete media by URL' })
+  @ApiQuery({
+    name: 'url',
+    required: true,
+    description: 'URL of media to delete',
+  })
   async deleteMediaByUrl(
     @Query() dto: DeleteMediaByUrlDto,
     @Res() res: Response,
@@ -78,7 +100,7 @@ export class MediaController {
     return res
       .status(HttpStatus.OK)
       .json(
-        new ApiResponse(
+        new ApiResponseDto(
           'Delete media successfully',
           await this.mediaService.deleteByUrl(dto.url),
         ),

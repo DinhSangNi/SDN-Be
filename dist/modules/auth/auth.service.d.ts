@@ -18,7 +18,7 @@ export declare class AuthService {
     register(dto: CreateUserDto): Promise<{
         user: {
             email: string;
-            role: import("../user/schema/user.schema").UserRole;
+            role: import("../../common/types/enums").UserRole;
             fullName?: string;
             avatar?: string;
             isActive: boolean;

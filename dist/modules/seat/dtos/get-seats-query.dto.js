@@ -11,11 +11,16 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.GetSeatsQueryDto = void 0;
 const class_validator_1 = require("class-validator");
+const swagger_1 = require("@nestjs/swagger");
 class GetSeatsQueryDto {
     labId;
 }
 exports.GetSeatsQueryDto = GetSeatsQueryDto;
 __decorate([
+    (0, swagger_1.ApiPropertyOptional)({
+        description: 'Optional MongoDB ObjectId of the lab to filter seats',
+        example: '64c3c0f0f4e8f5a9b2e9c4d1',
+    }),
     (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsMongoId)(),
     __metadata("design:type", String)

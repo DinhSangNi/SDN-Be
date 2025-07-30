@@ -20,6 +20,7 @@ const passport_1 = require("@nestjs/passport");
 const api_response_dto_1 = require("../../common/dto/api-response.dto");
 const delete_media_by_id_dto_1 = require("./dto/delete-media-by-id.dto");
 const delete_media_by_url_dto_1 = require("./dto/delete-media-by-url.dto");
+const swagger_1 = require("@nestjs/swagger");
 let MediaController = class MediaController {
     mediaService;
     constructor(mediaService) {
@@ -54,8 +55,11 @@ let MediaController = class MediaController {
 exports.MediaController = MediaController;
 __decorate([
     (0, common_1.Post)('upload'),
+    (0, swagger_1.ApiBearerAuth)(),
     (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt')),
     (0, common_1.UseInterceptors)((0, platform_express_1.FileInterceptor)('file')),
+    (0, swagger_1.ApiOperation)({ summary: 'Upload a media file' }),
+    (0, swagger_1.ApiConsumes)('multipart/form-data'),
     __param(0, (0, common_1.UploadedFile)()),
     __param(1, (0, common_1.Req)()),
     __param(2, (0, common_1.Res)()),
@@ -65,7 +69,10 @@ __decorate([
 ], MediaController.prototype, "uploadMedia", null);
 __decorate([
     (0, common_1.Delete)('/:id'),
+    (0, swagger_1.ApiBearerAuth)(),
     (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt')),
+    (0, swagger_1.ApiOperation)({ summary: 'Delete media by ID' }),
+    (0, swagger_1.ApiParam)({ name: 'id', description: 'ID of the media to delete' }),
     __param(0, (0, common_1.Param)()),
     __param(1, (0, common_1.Res)()),
     __metadata("design:type", Function),
@@ -74,7 +81,14 @@ __decorate([
 ], MediaController.prototype, "deleteMediaById", null);
 __decorate([
     (0, common_1.Delete)(''),
+    (0, swagger_1.ApiBearerAuth)(),
     (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt')),
+    (0, swagger_1.ApiOperation)({ summary: 'Delete media by URL' }),
+    (0, swagger_1.ApiQuery)({
+        name: 'url',
+        required: true,
+        description: 'URL of media to delete',
+    }),
     __param(0, (0, common_1.Query)()),
     __param(1, (0, common_1.Res)()),
     __metadata("design:type", Function),
@@ -82,6 +96,7 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], MediaController.prototype, "deleteMediaByUrl", null);
 exports.MediaController = MediaController = __decorate([
+    (0, swagger_1.ApiTags)('Media'),
     (0, common_1.Controller)('media'),
     __metadata("design:paramtypes", [media_service_1.MediaService])
 ], MediaController);

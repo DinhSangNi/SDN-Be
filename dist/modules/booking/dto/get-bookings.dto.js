@@ -11,6 +11,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.GetBookingsByLabAndDateRangeDto = void 0;
 const class_validator_1 = require("class-validator");
+const swagger_1 = require("@nestjs/swagger");
 class GetBookingsByLabAndDateRangeDto {
     labId;
     from;
@@ -18,14 +19,26 @@ class GetBookingsByLabAndDateRangeDto {
 }
 exports.GetBookingsByLabAndDateRangeDto = GetBookingsByLabAndDateRangeDto;
 __decorate([
+    (0, swagger_1.ApiProperty)({
+        description: 'ID của phòng lab',
+        example: '64d3a749bcf86cd799439012',
+    }),
     (0, class_validator_1.IsMongoId)(),
     __metadata("design:type", String)
 ], GetBookingsByLabAndDateRangeDto.prototype, "labId", void 0);
 __decorate([
+    (0, swagger_1.ApiProperty)({
+        description: 'Ngày bắt đầu (format: yyyy-MM-dd)',
+        example: '2025-08-01',
+    }),
     (0, class_validator_1.IsDateString)(),
     __metadata("design:type", String)
 ], GetBookingsByLabAndDateRangeDto.prototype, "from", void 0);
 __decorate([
+    (0, swagger_1.ApiProperty)({
+        description: 'Ngày kết thúc (format: yyyy-MM-dd)',
+        example: '2025-08-31',
+    }),
     (0, class_validator_1.IsDateString)(),
     __metadata("design:type", String)
 ], GetBookingsByLabAndDateRangeDto.prototype, "to", void 0);

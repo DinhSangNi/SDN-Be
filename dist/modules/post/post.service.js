@@ -17,7 +17,7 @@ const common_1 = require("@nestjs/common");
 const mongoose_1 = require("@nestjs/mongoose");
 const post_schema_1 = require("./schema/post.schema");
 const mongoose_2 = require("mongoose");
-const get_posts_filter_dto_1 = require("./dto/get-posts-filter.dto");
+const enums_1 = require("../../common/types/enums");
 let PostService = class PostService {
     postModel;
     constructor(postModel) {
@@ -45,7 +45,7 @@ let PostService = class PostService {
             .find(query)
             .sort({
             priority: -1,
-            createdAt: sort === get_posts_filter_dto_1.SortType.LATEST ? -1 : 1,
+            createdAt: sort === enums_1.SortType.LATEST ? -1 : 1,
         })
             .skip(skip)
             .limit(limit)

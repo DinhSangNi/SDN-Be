@@ -22,6 +22,7 @@ const role_guard_1 = require("../../common/guards/role.guard");
 const role_decorator_1 = require("../../common/decorators/role.decorator");
 const booking_service_1 = require("../booking/booking.service");
 const get_labs_query_1 = require("./dto/get-labs-query");
+const swagger_1 = require("@nestjs/swagger");
 let LabController = class LabController {
     labService;
     bookingService;
@@ -43,13 +44,13 @@ let LabController = class LabController {
     }
     async getLabById(labId, res) {
         return res
-            .status(common_1.HttpStatus.CREATED)
+            .status(common_1.HttpStatus.OK)
             .json(new api_response_dto_1.ApiResponse(`Get lab by ${labId} successfully`, (await this.labService.findById(labId))?.toObject()));
     }
     async getSeatsWithBooking(labId, date, slot, res) {
         const slotNum = parseInt(slot, 10);
         return res
-            .status(common_1.HttpStatus.CREATED)
+            .status(common_1.HttpStatus.OK)
             .json(new api_response_dto_1.ApiResponse(`Get lab by ${labId} successfully`, await this.bookingService.findSeatsWithBooking(labId, date, slotNum)));
     }
 };
@@ -57,6 +58,7 @@ exports.LabController = LabController;
 __decorate([
     (0, common_1.Get)(),
     (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt'), role_guard_1.RoleGuard),
+    (0, swagger_1.ApiOperation)({ summary: 'Get labs with optional filtering & pagination' }),
     __param(0, (0, common_1.Query)()),
     __param(1, (0, common_1.Res)()),
     __metadata("design:type", Function),
@@ -67,6 +69,7 @@ __decorate([
     (0, common_1.Post)(),
     (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt'), role_guard_1.RoleGuard),
     (0, role_decorator_1.Role)('admin'),
+    (0, swagger_1.ApiOperation)({ summary: 'Create a new lab (admin only)' }),
     __param(0, (0, common_1.Req)()),
     __param(1, (0, common_1.Body)()),
     __param(2, (0, common_1.Res)()),
@@ -76,6 +79,8 @@ __decorate([
 ], LabController.prototype, "createLab", null);
 __decorate([
     (0, common_1.Get)(':id'),
+    (0, swagger_1.ApiOperation)({ summary: 'Get a specific lab by ID' }),
+    (0, swagger_1.ApiParam)({ name: 'id', description: 'Lab ID' }),
     __param(0, (0, common_1.Param)('id')),
     __param(1, (0, common_1.Res)()),
     __metadata("design:type", Function),
@@ -84,6 +89,12 @@ __decorate([
 ], LabController.prototype, "getLabById", null);
 __decorate([
     (0, common_1.Get)(':labId/seats'),
+    (0, swagger_1.ApiOperation)({
+        summary: 'Get seats and bookings for a lab by date and slot',
+    }),
+    (0, swagger_1.ApiParam)({ name: 'labId', description: 'Lab ID' }),
+    (0, swagger_1.ApiQuery)({ name: 'date', description: 'Date in yyyy-mm-dd format' }),
+    (0, swagger_1.ApiQuery)({ name: 'slot', description: 'Slot number', type: Number }),
     __param(0, (0, common_1.Param)('labId')),
     __param(1, (0, common_1.Query)('date')),
     __param(2, (0, common_1.Query)('slot')),
@@ -93,7 +104,9 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], LabController.prototype, "getSeatsWithBooking", null);
 exports.LabController = LabController = __decorate([
+    (0, swagger_1.ApiTags)('Labs'),
     (0, common_1.Controller)('labs'),
+    (0, swagger_1.ApiBearerAuth)(),
     __metadata("design:paramtypes", [lab_service_1.LabService,
         booking_service_1.BookingService])
 ], LabController);

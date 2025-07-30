@@ -3,5 +3,5 @@ export declare class CreateLabDto {
     description?: string;
     location?: string;
     totalSeats: number;
-    autoGenerateSeats: string;
+    autoGenerateSeats: boolean;
 }

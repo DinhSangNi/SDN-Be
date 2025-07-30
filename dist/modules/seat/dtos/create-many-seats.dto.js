@@ -12,12 +12,29 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.CreateManySeatsDto = void 0;
 const class_transformer_1 = require("class-transformer");
 const class_validator_1 = require("class-validator");
+const swagger_1 = require("@nestjs/swagger");
 const create_seat_dto_1 = require("./create-seat.dto");
 class CreateManySeatsDto {
     seats;
 }
 exports.CreateManySeatsDto = CreateManySeatsDto;
 __decorate([
+    (0, swagger_1.ApiProperty)({
+        type: [create_seat_dto_1.CreateSeatDto],
+        description: 'Array of seats to be created',
+        example: [
+            {
+                seatNumber: 'A1',
+                labId: '64c3c0f0f4e8f5a9b2e9c4d1',
+                status: 'available',
+            },
+            {
+                seatNumber: 'A2',
+                labId: '64c3c0f0f4e8f5a9b2e9c4d1',
+                status: 'booked',
+            },
+        ],
+    }),
     (0, class_validator_1.IsArray)(),
     (0, class_validator_1.ValidateNested)({ each: true }),
     (0, class_transformer_1.Type)(() => create_seat_dto_1.CreateSeatDto),

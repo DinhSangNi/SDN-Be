@@ -25,6 +25,7 @@ const update_visible_dto_1 = require("./dto/update-visible.dto");
 const update_priority_dto_1 = require("./dto/update-priority.dto");
 const role_guard_1 = require("../../common/guards/role.guard");
 const role_decorator_1 = require("../../common/decorators/role.decorator");
+const swagger_1 = require("@nestjs/swagger");
 let PostController = class PostController {
     postService;
     constructor(postService) {
@@ -42,15 +43,15 @@ let PostController = class PostController {
             .status(common_1.HttpStatus.OK)
             .json(new api_response_dto_1.ApiResponse('List of posts', new paginated_response_dto_1.PaginatedResponse(data.posts, data.page, data.limit, data.totalItems)));
     }
+    async getPostById(id, res) {
+        return res
+            .status(common_1.HttpStatus.OK)
+            .json(new api_response_dto_1.ApiResponse('Get post by ID successfully', await this.postService.getById(id)));
+    }
     async update(id, updatePostDto, req, res) {
         return res
             .status(common_1.HttpStatus.OK)
             .json(new api_response_dto_1.ApiResponse('Update post successfully', await this.postService.update(id, updatePostDto, req.user.userId)));
-    }
-    async getPostById(id, res) {
-        return res
-            .status(common_1.HttpStatus.OK)
-            .json(new api_response_dto_1.ApiResponse('Update post successfully', await this.postService.getById(id)));
     }
     async deletePost(id, res) {
         return res
@@ -71,8 +72,11 @@ let PostController = class PostController {
 exports.PostController = PostController;
 __decorate([
     (0, common_1.Post)(),
+    (0, swagger_1.ApiBearerAuth)(),
     (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt'), role_guard_1.RoleGuard),
     (0, role_decorator_1.Role)('admin'),
+    (0, swagger_1.ApiOperation)({ summary: 'Create a new post' }),
+    (0, swagger_1.ApiBody)({ type: create_post_dto_1.CreatePostDto }),
     __param(0, (0, common_1.Body)()),
     __param(1, (0, common_1.Req)()),
     __param(2, (0, common_1.Res)()),
@@ -82,6 +86,7 @@ __decorate([
 ], PostController.prototype, "createPost", null);
 __decorate([
     (0, common_1.Get)(),
+    (0, swagger_1.ApiOperation)({ summary: 'Get all posts with filter' }),
     __param(0, (0, common_1.Query)()),
     __param(1, (0, common_1.Res)()),
     __metadata("design:type", Function),
@@ -89,9 +94,21 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], PostController.prototype, "getAllPosts", null);
 __decorate([
+    (0, common_1.Get)('/:id'),
+    (0, swagger_1.ApiOperation)({ summary: 'Get post by ID' }),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Res)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:returntype", Promise)
+], PostController.prototype, "getPostById", null);
+__decorate([
     (0, common_1.Put)('/:id'),
+    (0, swagger_1.ApiBearerAuth)(),
     (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt'), role_guard_1.RoleGuard),
     (0, role_decorator_1.Role)('admin'),
+    (0, swagger_1.ApiOperation)({ summary: 'Update post by ID' }),
+    (0, swagger_1.ApiBody)({ type: update_post_dto_1.UpdatePostDto }),
     __param(0, (0, common_1.Param)('id')),
     __param(1, (0, common_1.Body)()),
     __param(2, (0, common_1.Req)()),
@@ -101,17 +118,11 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], PostController.prototype, "update", null);
 __decorate([
-    (0, common_1.Get)('/:id'),
-    __param(0, (0, common_1.Param)('id')),
-    __param(1, (0, common_1.Res)()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, Object]),
-    __metadata("design:returntype", Promise)
-], PostController.prototype, "getPostById", null);
-__decorate([
     (0, common_1.Delete)('/:id'),
+    (0, swagger_1.ApiBearerAuth)(),
     (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt'), role_guard_1.RoleGuard),
     (0, role_decorator_1.Role)('admin'),
+    (0, swagger_1.ApiOperation)({ summary: 'Delete post by ID' }),
     __param(0, (0, common_1.Param)('id')),
     __param(1, (0, common_1.Res)()),
     __metadata("design:type", Function),
@@ -120,8 +131,11 @@ __decorate([
 ], PostController.prototype, "deletePost", null);
 __decorate([
     (0, common_1.Patch)(':id/visibility'),
+    (0, swagger_1.ApiBearerAuth)(),
     (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt'), role_guard_1.RoleGuard),
     (0, role_decorator_1.Role)('admin'),
+    (0, swagger_1.ApiOperation)({ summary: 'Change visibility of a post' }),
+    (0, swagger_1.ApiBody)({ type: update_visible_dto_1.UpdatePostVisibilityDto }),
     __param(0, (0, common_1.Param)('id')),
     __param(1, (0, common_1.Body)()),
     __param(2, (0, common_1.Res)()),
@@ -131,8 +145,11 @@ __decorate([
 ], PostController.prototype, "changeVisibility", null);
 __decorate([
     (0, common_1.Patch)(':id/priority'),
+    (0, swagger_1.ApiBearerAuth)(),
     (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt'), role_guard_1.RoleGuard),
     (0, role_decorator_1.Role)('admin'),
+    (0, swagger_1.ApiOperation)({ summary: 'Update priority of a post' }),
+    (0, swagger_1.ApiBody)({ type: update_priority_dto_1.UpdatePostPriorityDto }),
     __param(0, (0, common_1.Param)('id')),
     __param(1, (0, common_1.Body)()),
     __param(2, (0, common_1.Res)()),
@@ -141,6 +158,7 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], PostController.prototype, "updatePriority", null);
 exports.PostController = PostController = __decorate([
+    (0, swagger_1.ApiTags)('Post'),
     (0, common_1.Controller)('post'),
     __metadata("design:paramtypes", [post_service_1.PostService])
 ], PostController);

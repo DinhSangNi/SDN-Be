@@ -26,14 +26,25 @@ import { UpdatePostVisibilityDto } from './dto/update-visible.dto';
 import { UpdatePostPriorityDto } from './dto/update-priority.dto';
 import { RoleGuard } from 'src/common/guards/role.guard';
 import { Role } from 'src/common/decorators/role.decorator';
+import {
+  ApiTags,
+  ApiBearerAuth,
+  ApiOperation,
+  ApiResponse as SwaggerApiResponse,
+  ApiBody,
+} from '@nestjs/swagger';
 
+@ApiTags('Post')
 @Controller('post')
 export class PostController {
   constructor(private readonly postService: PostService) {}
 
   @Post()
+  @ApiBearerAuth()
   @UseGuards(AuthGuard('jwt'), RoleGuard)
   @Role('admin')
+  @ApiOperation({ summary: 'Create a new post' })
+  @ApiBody({ type: CreatePostDto })
   async createPost(
     @Body() createPostDto: CreatePostDto,
     @Req() req: { user: { userId: string } },
@@ -51,6 +62,7 @@ export class PostController {
   }
 
   @Get()
+  @ApiOperation({ summary: 'Get all posts with filter' })
   async getAllPosts(
     @Query() filterDto: GetPostsFilterDto,
     @Res() res: Response,
@@ -71,18 +83,29 @@ export class PostController {
       );
   }
 
+  @Get('/:id')
+  @ApiOperation({ summary: 'Get post by ID' })
+  async getPostById(@Param('id') id: string, @Res() res: Response) {
+    return res
+      .status(HttpStatus.OK)
+      .json(
+        new ApiResponse(
+          'Get post by ID successfully',
+          await this.postService.getById(id),
+        ),
+      );
+  }
+
   @Put('/:id')
+  @ApiBearerAuth()
   @UseGuards(AuthGuard('jwt'), RoleGuard)
   @Role('admin')
+  @ApiOperation({ summary: 'Update post by ID' })
+  @ApiBody({ type: UpdatePostDto })
   async update(
     @Param('id') id: string,
     @Body() updatePostDto: UpdatePostDto,
-    @Req()
-    req: {
-      user: {
-        userId: string;
-      };
-    },
+    @Req() req: { user: { userId: string } },
     @Res() res: Response,
   ) {
     return res
@@ -95,26 +118,12 @@ export class PostController {
       );
   }
 
-  @Get('/:id')
-  async getPostById(@Param('id') id: string, @Res() res: Response) {
-    return res
-      .status(HttpStatus.OK)
-      .json(
-        new ApiResponse(
-          'Update post successfully',
-          await this.postService.getById(id),
-        ),
-      );
-  }
-
   @Delete('/:id')
+  @ApiBearerAuth()
   @UseGuards(AuthGuard('jwt'), RoleGuard)
   @Role('admin')
-  async deletePost(
-    @Param('id') id: string,
-    @Res()
-    res: Response,
-  ) {
+  @ApiOperation({ summary: 'Delete post by ID' })
+  async deletePost(@Param('id') id: string, @Res() res: Response) {
     return res
       .status(HttpStatus.OK)
       .json(
@@ -126,13 +135,15 @@ export class PostController {
   }
 
   @Patch(':id/visibility')
+  @ApiBearerAuth()
   @UseGuards(AuthGuard('jwt'), RoleGuard)
   @Role('admin')
+  @ApiOperation({ summary: 'Change visibility of a post' })
+  @ApiBody({ type: UpdatePostVisibilityDto })
   async changeVisibility(
     @Param('id') id: string,
     @Body() dto: UpdatePostVisibilityDto,
-    @Res()
-    res: Response,
+    @Res() res: Response,
   ) {
     return res
       .status(HttpStatus.OK)
@@ -145,13 +156,15 @@ export class PostController {
   }
 
   @Patch(':id/priority')
+  @ApiBearerAuth()
   @UseGuards(AuthGuard('jwt'), RoleGuard)
   @Role('admin')
+  @ApiOperation({ summary: 'Update priority of a post' })
+  @ApiBody({ type: UpdatePostPriorityDto })
   async updatePriority(
     @Param('id') id: string,
     @Body() dto: UpdatePostPriorityDto,
-    @Res()
-    res: Response,
+    @Res() res: Response,
   ) {
     return res
       .status(HttpStatus.OK)
