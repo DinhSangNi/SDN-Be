@@ -13,6 +13,7 @@ import { LabModule } from './modules/lab/lab.module';
 import { BookingModule } from './modules/booking/booking.module';
 import { GeminiModule } from './modules/gemini/gemini.module';
 import { SeatModule } from './modules/seat/seat.module';
+import { MailModule } from './modules/mail/mail.module';
 
 @Module({
   imports: [
@@ -36,6 +37,7 @@ import { SeatModule } from './modules/seat/seat.module';
     BookingModule,
     GeminiModule,
     SeatModule,
+    MailModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -9,12 +9,14 @@ import { CancelManyBookingDto } from './dto/cancel-many-booking.dto';
 import { GetBookingQueryDto } from './dto/get-bookings-query.dto';
 import { PaginatedResponse } from 'src/common/dto/paginated-response.dto';
 import { UserRole } from 'src/common/types/enums';
+import { MailService } from '../mail/mail.service';
 export declare class BookingService {
     private readonly connection;
     private bookingModel;
     private readonly labService;
     private readonly seatService;
-    constructor(connection: Connection, bookingModel: Model<BookingDocument>, labService: LabService, seatService: SeatService);
+    private readonly mailService;
+    constructor(connection: Connection, bookingModel: Model<BookingDocument>, labService: LabService, seatService: SeatService, mailService: MailService);
     create(dto: CreateBookingDto, userId: string): Promise<BookingDocument>;
     createMany(dto: CreateMultipleBookingsDto, userId: string): Promise<BookingDocument[]>;
     getBookingsByLabAndDateRange(labId: string, from: string, to: string): Promise<Record<string, Record<number, any>>>;

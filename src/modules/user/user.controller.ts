@@ -87,18 +87,23 @@ export class UserController {
   @Post()
   @UseGuards(AuthGuard('jwt'), RoleGuard)
   @Role('admin')
-  @ApiOperation({ summary: 'Create a new user (admin only)' })
+  @ApiOperation({
+    summary:
+      'Create a new user (admin only) and send user creation notification email',
+  })
   @ApiBody({
     type: CreateUserDto,
     description: 'Data required to create a new user',
   })
   async CreateUser(@Body() dto: CreateUserDto, @Res() res: Response) {
+    const savedUser = await this.userService.createUser(dto);
+    const { password, ...rest } = savedUser.toObject();
     return res
       .status(HttpStatus.OK)
       .json(
-        new ApiResponse<User>(
+        new ApiResponse<Omit<User, 'password'>>(
           'Update role of user successfully',
-          await this.userService.createUser(dto),
+          rest,
         ),
       );
   }

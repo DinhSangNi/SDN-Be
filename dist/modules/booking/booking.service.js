@@ -22,16 +22,19 @@ const mongoose_3 = require("mongoose");
 const lab_service_1 = require("../lab/lab.service");
 const seat_service_1 = require("../seat/seat.service");
 const enums_1 = require("../../common/types/enums");
+const mail_service_1 = require("../mail/mail.service");
 let BookingService = class BookingService {
     connection;
     bookingModel;
     labService;
     seatService;
-    constructor(connection, bookingModel, labService, seatService) {
+    mailService;
+    constructor(connection, bookingModel, labService, seatService, mailService) {
         this.connection = connection;
         this.bookingModel = bookingModel;
         this.labService = labService;
         this.seatService = seatService;
+        this.mailService = mailService;
     }
     async create(dto, userId) {
         const { labId, seatId, date, slot, status } = dto;
@@ -53,6 +56,12 @@ let BookingService = class BookingService {
             slot,
             status: status ?? booking_enum_1.BookingStatus.APPROVED,
         });
+        const savedBooking = (await this.bookingModel
+            .findById(created._id)
+            .populate('user', '-password')
+            .populate('lab')
+            .populate('seat'));
+        await this.mailService.sendBookingCreationEmail(savedBooking?.user.email, savedBooking);
         return created;
     }
     async createMany(dto, userId) {
@@ -245,6 +254,7 @@ exports.BookingService = BookingService = __decorate([
     __metadata("design:paramtypes", [mongoose_3.Connection,
         mongoose_2.Model,
         lab_service_1.LabService,
-        seat_service_1.SeatService])
+        seat_service_1.SeatService,
+        mail_service_1.MailService])
 ], BookingService);
 //# sourceMappingURL=booking.service.js.map

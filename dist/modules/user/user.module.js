@@ -12,6 +12,7 @@ const user_service_1 = require("./user.service");
 const user_controller_1 = require("./user.controller");
 const mongoose_1 = require("@nestjs/mongoose");
 const user_schema_1 = require("./schema/user.schema");
+const mail_module_1 = require("../mail/mail.module");
 let UserModule = class UserModule {
 };
 exports.UserModule = UserModule;
@@ -24,6 +25,7 @@ exports.UserModule = UserModule = __decorate([
                     schema: user_schema_1.UserSchema,
                 },
             ]),
+            mail_module_1.MailModule,
         ],
         controllers: [user_controller_1.UserController],
         providers: [user_service_1.UserService],

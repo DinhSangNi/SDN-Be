@@ -14,10 +14,14 @@ import { GetFilterUsersDto } from './dto/get-users-filter.dto';
 import { UpdateUserRoleDto } from './dto/update-user-role.dto';
 import { UpdateUserActiveDto } from './dto/update-user-active.dto';
 import { UserRole } from 'src/common/types/enums';
+import { MailService } from 'src/modules/mail/mail.service';
 
 @Injectable()
 export class UserService {
-  constructor(@InjectModel(User.name) private userModel: Model<UserDocument>) {}
+  constructor(
+    @InjectModel(User.name) private userModel: Model<UserDocument>,
+    private readonly mailService: MailService,
+  ) {}
 
   async createUser(dto: CreateUserDto) {
     const { email, password, fullName, role } = dto;
@@ -37,6 +41,7 @@ export class UserService {
     });
 
     const savedUser = await user.save();
+    await this.mailService.sendAccountCreationEmail(savedUser.email);
 
     return savedUser;
   }

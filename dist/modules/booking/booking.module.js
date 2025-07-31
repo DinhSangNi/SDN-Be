@@ -14,6 +14,7 @@ const mongoose_1 = require("@nestjs/mongoose");
 const booking_schema_1 = require("./schema/booking.schema");
 const lab_module_1 = require("../lab/lab.module");
 const seat_module_1 = require("../seat/seat.module");
+const mail_module_1 = require("../mail/mail.module");
 let BookingModule = class BookingModule {
 };
 exports.BookingModule = BookingModule;
@@ -28,6 +29,7 @@ exports.BookingModule = BookingModule = __decorate([
             ]),
             (0, common_1.forwardRef)(() => lab_module_1.LabModule),
             seat_module_1.SeatModule,
+            mail_module_1.MailModule,
         ],
         controllers: [booking_controller_1.BookingController],
         providers: [booking_service_1.BookingService],

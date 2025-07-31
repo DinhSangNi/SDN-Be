@@ -19,10 +19,13 @@ const user_schema_1 = require("./schema/user.schema");
 const mongoose_2 = require("mongoose");
 const bcrypt = require("bcrypt");
 const enums_1 = require("../../common/types/enums");
+const mail_service_1 = require("../mail/mail.service");
 let UserService = class UserService {
     userModel;
-    constructor(userModel) {
+    mailService;
+    constructor(userModel, mailService) {
         this.userModel = userModel;
+        this.mailService = mailService;
     }
     async createUser(dto) {
         const { email, password, fullName, role } = dto;
@@ -38,6 +41,7 @@ let UserService = class UserService {
             role: role || enums_1.UserRole.STUDENT,
         });
         const savedUser = await user.save();
+        await this.mailService.sendAccountCreationEmail(savedUser.email);
         return savedUser;
     }
     async findByEmail(email) {
@@ -94,6 +98,7 @@ exports.UserService = UserService;
 exports.UserService = UserService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, mongoose_1.InjectModel)(user_schema_1.User.name)),
-    __metadata("design:paramtypes", [mongoose_2.Model])
+    __metadata("design:paramtypes", [mongoose_2.Model,
+        mail_service_1.MailService])
 ], UserService);
 //# sourceMappingURL=user.service.js.map

@@ -37,9 +37,11 @@ let UserController = class UserController {
             .json(new api_response_dto_1.ApiResponse('List of users', new paginated_response_dto_1.PaginatedResponse(data.users, data.page, data.limit, data.totalItems)));
     }
     async CreateUser(dto, res) {
+        const savedUser = await this.userService.createUser(dto);
+        const { password, ...rest } = savedUser.toObject();
         return res
             .status(common_1.HttpStatus.OK)
-            .json(new api_response_dto_1.ApiResponse('Update role of user successfully', await this.userService.createUser(dto)));
+            .json(new api_response_dto_1.ApiResponse('Update role of user successfully', rest));
     }
     async updateUserRole(id, dto, res) {
         return res
@@ -95,7 +97,9 @@ __decorate([
     (0, common_1.Post)(),
     (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt'), role_guard_1.RoleGuard),
     (0, role_decorator_1.Role)('admin'),
-    (0, swagger_1.ApiOperation)({ summary: 'Create a new user (admin only)' }),
+    (0, swagger_1.ApiOperation)({
+        summary: 'Create a new user (admin only) and send user creation notification email',
+    }),
     (0, swagger_1.ApiBody)({
         type: create_user_dto_1.CreateUserDto,
         description: 'Data required to create a new user',

@@ -22,6 +22,7 @@ const lab_module_1 = require("./modules/lab/lab.module");
 const booking_module_1 = require("./modules/booking/booking.module");
 const gemini_module_1 = require("./modules/gemini/gemini.module");
 const seat_module_1 = require("./modules/seat/seat.module");
+const mail_module_1 = require("./modules/mail/mail.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -48,6 +49,7 @@ exports.AppModule = AppModule = __decorate([
             booking_module_1.BookingModule,
             gemini_module_1.GeminiModule,
             seat_module_1.SeatModule,
+            mail_module_1.MailModule,
         ],
         controllers: [app_controller_1.AppController],
         providers: [app_service_1.AppService],

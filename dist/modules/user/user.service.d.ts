@@ -4,9 +4,11 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { GetFilterUsersDto } from './dto/get-users-filter.dto';
 import { UpdateUserRoleDto } from './dto/update-user-role.dto';
 import { UpdateUserActiveDto } from './dto/update-user-active.dto';
+import { MailService } from 'src/modules/mail/mail.service';
 export declare class UserService {
     private userModel;
-    constructor(userModel: Model<UserDocument>);
+    private readonly mailService;
+    constructor(userModel: Model<UserDocument>, mailService: MailService);
     createUser(dto: CreateUserDto): Promise<import("mongoose").Document<unknown, {}, UserDocument, {}> & User & import("mongoose").Document<unknown, any, any, Record<string, any>> & Required<{
         _id: unknown;
     }> & {

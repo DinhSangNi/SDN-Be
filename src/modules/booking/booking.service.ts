@@ -19,6 +19,7 @@ import { CancelManyBookingDto } from './dto/cancel-many-booking.dto';
 import { GetBookingQueryDto } from './dto/get-bookings-query.dto';
 import { PaginatedResponse } from 'src/common/dto/paginated-response.dto';
 import { UserRole } from 'src/common/types/enums';
+import { MailService } from '../mail/mail.service';
 
 @Injectable()
 export class BookingService {
@@ -27,6 +28,7 @@ export class BookingService {
     @InjectModel(Booking.name) private bookingModel: Model<BookingDocument>,
     private readonly labService: LabService,
     private readonly seatService: SeatService,
+    private readonly mailService: MailService,
   ) {}
 
   async create(
@@ -57,6 +59,39 @@ export class BookingService {
       slot,
       status: status ?? BookingStatus.APPROVED,
     });
+
+    const savedBooking = (await this.bookingModel
+      .findById(created._id)
+      .populate('user', '-password')
+      .populate('lab')
+      .populate('seat')) as
+      | (Booking & {
+          user: {
+            email: string;
+          };
+          lab: {
+            name: string;
+          };
+          seat: {
+            seatNumber: string;
+          };
+        })
+      | null;
+
+    await this.mailService.sendBookingCreationEmail(
+      savedBooking?.user.email as string,
+      savedBooking as Booking & {
+        user: {
+          email: string;
+        };
+        lab: {
+          name: string;
+        };
+        seat: {
+          seatNumber: string;
+        };
+      },
+    );
 
     return created;
   }

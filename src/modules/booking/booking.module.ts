@@ -5,6 +5,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { Booking, BookingSchema } from './schema/booking.schema';
 import { LabModule } from '../lab/lab.module';
 import { SeatModule } from '../seat/seat.module';
+import { MailModule } from '../mail/mail.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { SeatModule } from '../seat/seat.module';
     ]),
     forwardRef(() => LabModule),
     SeatModule,
+    MailModule,
   ],
   controllers: [BookingController],
   providers: [BookingService],
