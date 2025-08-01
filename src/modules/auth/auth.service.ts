@@ -5,6 +5,7 @@ import { ConfigService } from '@nestjs/config';
 import * as bcrypt from 'bcrypt';
 import { LoginDto } from './dto/login.dto';
 import { CreateUserDto } from '../user/dto/create-user.dto';
+import { UserDocument } from '../user/schema/user.schema';
 
 @Injectable()
 export class AuthService {
@@ -67,6 +68,13 @@ export class AuthService {
       refreshToken,
       user: rest,
     };
+  }
+
+  async loginWithGoogle(email: string): Promise<UserDocument> {
+    const existed = await this.userService.findByEmail(email);
+    if (!existed) throw new UnauthorizedException('Email not registered');
+
+    return existed;
   }
 
   async register(dto: CreateUserDto) {

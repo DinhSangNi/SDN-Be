@@ -1,11 +1,13 @@
 import {
   Body,
   Controller,
+  Get,
   HttpStatus,
   Post,
   Req,
   Res,
   UnauthorizedException,
+  UseGuards,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
@@ -14,6 +16,7 @@ import { ApiResponse } from 'src/common/dto/api-response.dto';
 import { UserDocument } from '../user/schema/user.schema';
 import { CreateUserDto } from '../user/dto/create-user.dto';
 import { ApiTags, ApiOperation, ApiBody, ApiCookieAuth } from '@nestjs/swagger';
+import { AuthGuard } from '@nestjs/passport';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -104,5 +107,55 @@ export class AuthController {
     return res
       .status(HttpStatus.OK)
       .json(new ApiResponse('Refresh token sucessfully'));
+  }
+
+  @Get('google')
+  @UseGuards(AuthGuard('google'))
+  @ApiOperation({ summary: 'Xác thực bằng Google' })
+  async googleLogin() {}
+
+  @Get('google/redirect')
+  @UseGuards(AuthGuard('google'))
+  @ApiOperation({ summary: 'Xác thực bằng Google - Redirect' })
+  async googleRedirect(@Req() req: Request, @Res() res: Response) {
+    const user = req.user as {
+      email: string;
+      name: string;
+      picture: string;
+      googleId: string;
+    };
+
+    const existedUser = await this.authService.loginWithGoogle(user.email);
+
+    const accessToken = await this.authService.generateAccessToken(
+      existedUser._id as string,
+      existedUser.email,
+      existedUser.role,
+    );
+    const refreshToken = await this.authService.generateRefreshToken(
+      existedUser._id as string,
+      existedUser.email,
+      existedUser.role,
+    );
+
+    res.cookie('refreshToken', refreshToken, {
+      httpOnly: true,
+      secure: false,
+      sameSite: 'strict',
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+
+    const { password, ...rest } = existedUser;
+
+    res.send(`
+      <html>
+        <body>
+          <script>
+            window.opener.postMessage(${JSON.stringify({ accessToken: accessToken, user: rest })}, "*");
+            window.close();
+          </script>
+        </body>
+      </html>
+    `);
   }
 }
