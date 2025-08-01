@@ -53,6 +53,12 @@ let AuthService = class AuthService {
             user: rest,
         };
     }
+    async loginWithGoogle(email) {
+        const existed = await this.userService.findByEmail(email);
+        if (!existed)
+            throw new common_1.UnauthorizedException('Email not registered');
+        return existed;
+    }
     async register(dto) {
         const newUser = (await this.userService.createUser(dto)).toObject();
         const accessToken = await this.generateAccessToken(newUser._id, newUser.email, newUser.role);

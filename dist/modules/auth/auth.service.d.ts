@@ -3,6 +3,7 @@ import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { LoginDto } from './dto/login.dto';
 import { CreateUserDto } from '../user/dto/create-user.dto';
+import { UserDocument } from '../user/schema/user.schema';
 export declare class AuthService {
     private readonly userService;
     private readonly jwtService;
@@ -15,6 +16,7 @@ export declare class AuthService {
         refreshToken: string;
         user: any;
     }>;
+    loginWithGoogle(email: string): Promise<UserDocument>;
     register(dto: CreateUserDto): Promise<{
         user: {
             email: string;

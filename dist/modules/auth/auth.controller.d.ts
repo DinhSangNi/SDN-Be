@@ -9,4 +9,6 @@ export declare class AuthController {
     register(dto: CreateUserDto, res: Response): Promise<Response<any, Record<string, any>>>;
     refresh(req: Request, res: Response): Promise<Response<any, Record<string, any>>>;
     logout(res: Response): Response<any, Record<string, any>>;
+    googleLogin(): Promise<void>;
+    googleRedirect(req: Request, res: Response): Promise<void>;
 }
