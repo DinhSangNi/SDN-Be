@@ -103,7 +103,7 @@ export class AuthController {
   @Post('logout')
   @ApiOperation({ summary: 'Logout user and clear refresh token' })
   logout(@Res() res: Response) {
-    res.clearCookie('refreshToken', { path: '/auth/refresh' });
+    res.clearCookie('refreshToken');
     return res
       .status(HttpStatus.OK)
       .json(new ApiResponse('Refresh token sucessfully'));

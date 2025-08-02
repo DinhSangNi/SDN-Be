@@ -67,7 +67,7 @@ let AuthController = class AuthController {
         }));
     }
     logout(res) {
-        res.clearCookie('refreshToken', { path: '/auth/refresh' });
+        res.clearCookie('refreshToken');
         return res
             .status(common_1.HttpStatus.OK)
             .json(new api_response_dto_1.ApiResponse('Refresh token sucessfully'));
