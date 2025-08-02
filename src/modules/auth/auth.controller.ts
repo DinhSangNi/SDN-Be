@@ -125,37 +125,50 @@ export class AuthController {
       googleId: string;
     };
 
-    const existedUser = await this.authService.loginWithGoogle(user.email);
+    try {
+      const existedUser = await this.authService.loginWithGoogle(user.email);
 
-    const accessToken = await this.authService.generateAccessToken(
-      existedUser._id as string,
-      existedUser.email,
-      existedUser.role,
-    );
-    const refreshToken = await this.authService.generateRefreshToken(
-      existedUser._id as string,
-      existedUser.email,
-      existedUser.role,
-    );
+      const accessToken = await this.authService.generateAccessToken(
+        existedUser._id as string,
+        existedUser.email,
+        existedUser.role,
+      );
+      const refreshToken = await this.authService.generateRefreshToken(
+        existedUser._id as string,
+        existedUser.email,
+        existedUser.role,
+      );
 
-    res.cookie('refreshToken', refreshToken, {
-      httpOnly: true,
-      secure: false,
-      sameSite: 'strict',
-      maxAge: 7 * 24 * 60 * 60 * 1000,
-    });
+      res.cookie('refreshToken', refreshToken, {
+        httpOnly: true,
+        secure: false,
+        sameSite: 'strict',
+        maxAge: 7 * 24 * 60 * 60 * 1000,
+      });
 
-    const { password, ...rest } = existedUser;
+      const { password, ...rest } = existedUser;
 
-    res.send(`
-      <html>
-        <body>
-          <script>
-            window.opener.postMessage(${JSON.stringify({ accessToken: accessToken, user: rest })}, "*");
-            window.close();
-          </script>
-        </body>
-      </html>
-    `);
+      res.send(`
+    <html>
+      <body>
+        <script>
+          window.opener.postMessage(${JSON.stringify({ accessToken, user: rest })}, "*");
+          window.close();
+        </script>
+      </body>
+    </html>
+  `);
+    } catch (err) {
+      res.send(`
+    <html>
+      <body>
+        <script>
+          window.opener.postMessage(${JSON.stringify({ error: err.message || 'Login failed' })}, "*");
+          window.close();
+        </script>
+      </body>
+    </html>
+  `);
+    }
   }
 }

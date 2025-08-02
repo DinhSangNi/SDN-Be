@@ -25,7 +25,7 @@ let GoogleStrategy = class GoogleStrategy extends (0, passport_1.PassportStrateg
         });
         this.configService = configService;
     }
-    async validate(profile, done) {
+    async validate(accessToken, refreshToken, profile, done) {
         const user = {
             email: profile.emails[0].value,
             name: profile.displayName,
