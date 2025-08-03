@@ -9,6 +9,7 @@ export declare class UserController {
     constructor(userService: UserService);
     getAllUsers(filterDto: GetFilterUsersDto, res: Response): Promise<Response<any, Record<string, any>>>;
     CreateUser(dto: CreateUserDto, res: Response): Promise<Response<any, Record<string, any>>>;
+    createUsersByExcelFile(file: Express.Multer.File, res: Response): Promise<Response<any, Record<string, any>>>;
     updateUserRole(id: string, dto: UpdateUserRoleDto, res: Response): Promise<Response<any, Record<string, any>>>;
     updateActiveStatus(id: string, dto: UpdateUserActiveDto, res: Response): Promise<Response<any, Record<string, any>>>;
     deleteUser(id: string, res: Response): Promise<Response<any, Record<string, any>>>;

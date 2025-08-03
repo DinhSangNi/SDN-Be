@@ -15,6 +15,11 @@ import { UpdateUserRoleDto } from './dto/update-user-role.dto';
 import { UpdateUserActiveDto } from './dto/update-user-active.dto';
 import { UserRole } from 'src/common/types/enums';
 import { MailService } from 'src/modules/mail/mail.service';
+import * as XLSX from 'xlsx';
+import { plainToInstance } from 'class-transformer';
+import { UserImportResult } from './types';
+import { validate } from 'class-validator';
+import { toCamelCase } from 'src/common/utils';
 
 @Injectable()
 export class UserService {
@@ -107,5 +112,56 @@ export class UserService {
 
     await user.deleteOne();
     return user.toObject();
+  }
+
+  async createUsersByExcelFile(file: Express.Multer.File) {
+    const workBook = XLSX.read(file.buffer, { type: 'buffer' });
+    const sheetName = workBook.SheetNames[0];
+    const workSheet = workBook.Sheets[sheetName];
+    const rawData = XLSX.utils.sheet_to_json(workSheet);
+
+    if (rawData.length === 0) {
+      throw new BadRequestException('Excel sheet is empty');
+    }
+
+    const users: Omit<User, 'password'>[] = [];
+    const errors: UserImportResult['errors'] = [];
+    for (let i = 0; i < rawData.length; i++) {
+      const rowIndex = i;
+      const row = rawData[rowIndex] as Partial<CreateUserDto>;
+      const normalizedRow: Record<string, any> = {};
+      Object.entries(row).forEach(([key, value]) => {
+        normalizedRow[toCamelCase(key)] = value;
+      });
+      // console.log('normalizedRow: ', normalizedRow);
+      if (!normalizedRow.password) {
+        normalizedRow.password = '123456789';
+      }
+      const dto = plainToInstance(CreateUserDto, normalizedRow);
+
+      const validationErrors = await validate(dto);
+
+      if (validationErrors.length > 0) {
+        const msgs = validationErrors.map((err) => {
+          return Object.values(err.constraints ?? {}).join(', ');
+        });
+        const { password, ...rest } = row;
+
+        errors.push({ row: rowIndex, error: msgs, data: rest });
+        continue;
+      }
+
+      try {
+        const newUser = await this.createUser(dto);
+        const { password, ...rest } = newUser;
+        users.push(rest);
+      } catch (error) {
+        const { password, ...rest } = row;
+        errors.push({ row: rowIndex, error: error, data: rest });
+        continue;
+      }
+    }
+
+    return { createdUsers: users, errors };
   }
 }

@@ -18,8 +18,13 @@ const mongoose_1 = require("@nestjs/mongoose");
 const user_schema_1 = require("./schema/user.schema");
 const mongoose_2 = require("mongoose");
 const bcrypt = require("bcrypt");
+const create_user_dto_1 = require("./dto/create-user.dto");
 const enums_1 = require("../../common/types/enums");
 const mail_service_1 = require("../mail/mail.service");
+const XLSX = require("xlsx");
+const class_transformer_1 = require("class-transformer");
+const class_validator_1 = require("class-validator");
+const utils_1 = require("../../common/utils");
 let UserService = class UserService {
     userModel;
     mailService;
@@ -92,6 +97,49 @@ let UserService = class UserService {
         }
         await user.deleteOne();
         return user.toObject();
+    }
+    async createUsersByExcelFile(file) {
+        const workBook = XLSX.read(file.buffer, { type: 'buffer' });
+        const sheetName = workBook.SheetNames[0];
+        const workSheet = workBook.Sheets[sheetName];
+        const rawData = XLSX.utils.sheet_to_json(workSheet);
+        if (rawData.length === 0) {
+            throw new common_1.BadRequestException('Excel sheet is empty');
+        }
+        const users = [];
+        const errors = [];
+        for (let i = 0; i < rawData.length; i++) {
+            const rowIndex = i;
+            const row = rawData[rowIndex];
+            const normalizedRow = {};
+            Object.entries(row).forEach(([key, value]) => {
+                normalizedRow[(0, utils_1.toCamelCase)(key)] = value;
+            });
+            if (!normalizedRow.password) {
+                normalizedRow.password = '123456789';
+            }
+            const dto = (0, class_transformer_1.plainToInstance)(create_user_dto_1.CreateUserDto, normalizedRow);
+            const validationErrors = await (0, class_validator_1.validate)(dto);
+            if (validationErrors.length > 0) {
+                const msgs = validationErrors.map((err) => {
+                    return Object.values(err.constraints ?? {}).join(', ');
+                });
+                const { password, ...rest } = row;
+                errors.push({ row: rowIndex, error: msgs, data: rest });
+                continue;
+            }
+            try {
+                const newUser = await this.createUser(dto);
+                const { password, ...rest } = newUser;
+                users.push(rest);
+            }
+            catch (error) {
+                const { password, ...rest } = row;
+                errors.push({ row: rowIndex, error: error, data: rest });
+                continue;
+            }
+        }
+        return { createdUsers: users, errors };
     }
 };
 exports.UserService = UserService;

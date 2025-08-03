@@ -9,7 +9,9 @@ import {
   Post,
   Query,
   Res,
+  UploadedFile,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { Response } from 'express';
@@ -26,11 +28,13 @@ import { CreateUserDto } from './dto/create-user.dto';
 import {
   ApiBearerAuth,
   ApiBody,
+  ApiConsumes,
   ApiOkResponse,
   ApiOperation,
   ApiParam,
   ApiTags,
 } from '@nestjs/swagger';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @ApiTags('users')
 @ApiBearerAuth()
@@ -104,6 +108,38 @@ export class UserController {
         new ApiResponse<Omit<User, 'password'>>(
           'Update role of user successfully',
           rest,
+        ),
+      );
+  }
+
+  @Post('import-excel')
+  @UseGuards(AuthGuard('jwt'), RoleGuard)
+  @Role('admin')
+  @UseInterceptors(FileInterceptor('file'))
+  @ApiOperation({ summary: 'Import users from Excel file (admin only)' })
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    description: 'Excel file upload',
+    schema: {
+      type: 'object',
+      properties: {
+        file: {
+          type: 'string',
+          format: 'binary',
+        },
+      },
+    },
+  })
+  async createUsersByExcelFile(
+    @UploadedFile() file: Express.Multer.File,
+    @Res() res: Response,
+  ) {
+    return res
+      .status(HttpStatus.CREATED)
+      .json(
+        new ApiResponse(
+          'Create users by excel file successfully',
+          await this.userService.createUsersByExcelFile(file),
         ),
       );
   }

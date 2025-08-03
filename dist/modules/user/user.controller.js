@@ -25,6 +25,7 @@ const role_guard_1 = require("../../common/guards/role.guard");
 const role_decorator_1 = require("../../common/decorators/role.decorator");
 const create_user_dto_1 = require("./dto/create-user.dto");
 const swagger_1 = require("@nestjs/swagger");
+const platform_express_1 = require("@nestjs/platform-express");
 let UserController = class UserController {
     userService;
     constructor(userService) {
@@ -42,6 +43,11 @@ let UserController = class UserController {
         return res
             .status(common_1.HttpStatus.OK)
             .json(new api_response_dto_1.ApiResponse('Update role of user successfully', rest));
+    }
+    async createUsersByExcelFile(file, res) {
+        return res
+            .status(common_1.HttpStatus.CREATED)
+            .json(new api_response_dto_1.ApiResponse('Create users by excel file successfully', await this.userService.createUsersByExcelFile(file)));
     }
     async updateUserRole(id, dto, res) {
         return res
@@ -110,6 +116,31 @@ __decorate([
     __metadata("design:paramtypes", [create_user_dto_1.CreateUserDto, Object]),
     __metadata("design:returntype", Promise)
 ], UserController.prototype, "CreateUser", null);
+__decorate([
+    (0, common_1.Post)('import-excel'),
+    (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt'), role_guard_1.RoleGuard),
+    (0, role_decorator_1.Role)('admin'),
+    (0, common_1.UseInterceptors)((0, platform_express_1.FileInterceptor)('file')),
+    (0, swagger_1.ApiOperation)({ summary: 'Import users from Excel file (admin only)' }),
+    (0, swagger_1.ApiConsumes)('multipart/form-data'),
+    (0, swagger_1.ApiBody)({
+        description: 'Excel file upload',
+        schema: {
+            type: 'object',
+            properties: {
+                file: {
+                    type: 'string',
+                    format: 'binary',
+                },
+            },
+        },
+    }),
+    __param(0, (0, common_1.UploadedFile)()),
+    __param(1, (0, common_1.Res)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Object]),
+    __metadata("design:returntype", Promise)
+], UserController.prototype, "createUsersByExcelFile", null);
 __decorate([
     (0, common_1.Patch)('/:id/role'),
     (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt'), role_guard_1.RoleGuard),

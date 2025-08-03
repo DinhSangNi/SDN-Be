@@ -29,4 +29,12 @@ export declare class UserService {
     updateRole(userId: string, dto: UpdateUserRoleDto): Promise<User>;
     updateActiveStatus(userId: string, dto: UpdateUserActiveDto): Promise<User>;
     delete(id: string): Promise<User>;
+    createUsersByExcelFile(file: Express.Multer.File): Promise<{
+        createdUsers: Omit<User, "password">[];
+        errors: {
+            row: number;
+            error: string[];
+            data: Partial<CreateUserDto>;
+        }[];
+    }>;
 }
