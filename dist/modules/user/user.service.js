@@ -99,47 +99,77 @@ let UserService = class UserService {
         return user.toObject();
     }
     async createUsersByExcelFile(file) {
-        const workBook = XLSX.read(file.buffer, { type: 'buffer' });
-        const sheetName = workBook.SheetNames[0];
-        const workSheet = workBook.Sheets[sheetName];
-        const rawData = XLSX.utils.sheet_to_json(workSheet);
-        if (rawData.length === 0) {
-            throw new common_1.BadRequestException('Excel sheet is empty');
+        if (file.mimetype !==
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' &&
+            file.mimetype !== 'application/vnd.ms-excel') {
+            throw new common_1.BadRequestException('Only Excel files (.xlsx or .xls) are supported');
         }
-        const users = [];
+        let workBook;
+        try {
+            workBook = XLSX.read(file.buffer, { type: 'buffer' });
+        }
+        catch (error) {
+            console.error('XLSX parsing error:', error);
+            throw new common_1.BadRequestException('Uploaded file is not a valid Excel file');
+        }
+        const createdUsers = [];
         const errors = [];
-        for (let i = 0; i < rawData.length; i++) {
-            const rowIndex = i;
-            const row = rawData[rowIndex];
-            const normalizedRow = {};
-            Object.entries(row).forEach(([key, value]) => {
-                normalizedRow[(0, utils_1.toCamelCase)(key)] = value;
-            });
-            if (!normalizedRow.password) {
-                normalizedRow.password = '123456789';
-            }
-            const dto = (0, class_transformer_1.plainToInstance)(create_user_dto_1.CreateUserDto, normalizedRow);
-            const validationErrors = await (0, class_validator_1.validate)(dto);
-            if (validationErrors.length > 0) {
-                const msgs = validationErrors.map((err) => {
-                    return Object.values(err.constraints ?? {}).join(', ');
-                });
-                const { password, ...rest } = row;
-                errors.push({ row: rowIndex, error: msgs, data: rest });
+        for (const sheetName of workBook.SheetNames) {
+            const workSheet = workBook.Sheets[sheetName];
+            const rawData = XLSX.utils.sheet_to_json(workSheet);
+            if (rawData.length === 0) {
+                console.warn(`Sheet "${sheetName}" is empty, skipping...`);
                 continue;
             }
-            try {
-                const newUser = await this.createUser(dto);
-                const { password, ...rest } = newUser;
-                users.push(rest);
-            }
-            catch (error) {
-                const { password, ...rest } = row;
-                errors.push({ row: rowIndex, error: error, data: rest });
-                continue;
+            for (let i = 0; i < rawData.length; i++) {
+                const rowIndex = i;
+                const row = rawData[i];
+                try {
+                    const normalizedRow = {};
+                    for (const [key, value] of Object.entries(row)) {
+                        normalizedRow[(0, utils_1.toCamelCase)(key)] = value;
+                    }
+                    if (!normalizedRow.password) {
+                        normalizedRow.password = '123456789';
+                    }
+                    const dto = (0, class_transformer_1.plainToInstance)(create_user_dto_1.CreateUserDto, normalizedRow);
+                    const validationErrors = await (0, class_validator_1.validate)(dto);
+                    if (validationErrors.length > 0) {
+                        const msgs = validationErrors.map((err) => Object.values(err.constraints ?? {}).join(', '));
+                        const { password, ...rest } = normalizedRow;
+                        errors.push({
+                            sheet: sheetName,
+                            row: rowIndex,
+                            error: msgs,
+                            data: rest,
+                        });
+                        continue;
+                    }
+                    const newUser = await this.createUser(dto);
+                    const { password, ...rest } = newUser;
+                    createdUsers.push(rest);
+                }
+                catch (err) {
+                    const { password, ...rest } = row;
+                    const errorMessage = typeof err === 'string'
+                        ? err
+                        : err?.message || 'Unexpected error during user creation';
+                    errors.push({
+                        sheet: sheetName,
+                        row: rowIndex,
+                        error: [errorMessage],
+                        data: rest,
+                    });
+                }
             }
         }
-        return { createdUsers: users, errors };
+        if (createdUsers.length === 0 && errors.length > 0) {
+            throw new common_1.BadRequestException('All sheets contain invalid data');
+        }
+        return {
+            createdUsers,
+            errors,
+        };
     }
 };
 exports.UserService = UserService;

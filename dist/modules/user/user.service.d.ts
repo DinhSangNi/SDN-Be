@@ -32,6 +32,7 @@ export declare class UserService {
     createUsersByExcelFile(file: Express.Multer.File): Promise<{
         createdUsers: Omit<User, "password">[];
         errors: {
+            sheet: string;
             row: number;
             error: string[];
             data: Partial<CreateUserDto>;

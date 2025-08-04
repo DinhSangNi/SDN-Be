@@ -4,6 +4,7 @@ import { User } from '../schema/user.schema';
 export interface UserImportResult {
   createdUsers: User[];
   errors: {
+    sheet: string;
     row: number;
     error: string[];
     data: Partial<CreateUserDto>;
