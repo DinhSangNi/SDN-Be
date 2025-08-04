@@ -155,7 +155,9 @@ export class UserService {
           // Chuyển key thành camelCase
           const normalizedRow: Record<string, any> = {};
           for (const [key, value] of Object.entries(row)) {
-            normalizedRow[toCamelCase(key)] = value;
+            normalizedRow[
+              toCamelCase(key) === 'fullname' ? 'fullName' : toCamelCase(key)
+            ] = value;
           }
 
           if (!normalizedRow.password) {

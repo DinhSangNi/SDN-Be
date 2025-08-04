@@ -127,7 +127,7 @@ let UserService = class UserService {
                 try {
                     const normalizedRow = {};
                     for (const [key, value] of Object.entries(row)) {
-                        normalizedRow[(0, utils_1.toCamelCase)(key)] = value;
+                        normalizedRow[(0, utils_1.toCamelCase)(key) === 'fullname' ? 'fullName' : (0, utils_1.toCamelCase)(key)] = value;
                     }
                     if (!normalizedRow.password) {
                         normalizedRow.password = '123456789';
