@@ -146,7 +146,7 @@ let UserService = class UserService {
                         continue;
                     }
                     const newUser = await this.createUser(dto);
-                    const { password, ...rest } = newUser;
+                    const { password, ...rest } = newUser.toObject();
                     createdUsers.push(rest);
                 }
                 catch (err) {
@@ -162,9 +162,6 @@ let UserService = class UserService {
                     });
                 }
             }
-        }
-        if (createdUsers.length === 0 && errors.length > 0) {
-            throw new common_1.BadRequestException('All sheets contain invalid data');
         }
         return {
             createdUsers,

@@ -181,7 +181,7 @@ export class UserService {
           }
 
           const newUser = await this.createUser(dto);
-          const { password, ...rest } = newUser;
+          const { password, ...rest } = newUser.toObject();
           createdUsers.push(rest);
         } catch (err) {
           const { password, ...rest } = row;
@@ -198,10 +198,6 @@ export class UserService {
           });
         }
       }
-    }
-
-    if (createdUsers.length === 0 && errors.length > 0) {
-      throw new BadRequestException('All sheets contain invalid data');
     }
 
     return {
